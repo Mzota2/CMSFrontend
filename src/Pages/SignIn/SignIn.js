@@ -8,7 +8,12 @@ import { Schema } from '../../Components/Yup/Schema';
 import {useDispatch} from 'react-redux';
 import {setActive} from '../../State/StudentsSlice'
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
 function SignIn() {
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [userData, setUserData]  = React.useState();
   const [showPassword, setShowPassword] = React.useState(false);
@@ -21,14 +26,18 @@ function SignIn() {
 
   const handleLogin = async(user)=>{
     try {
+      setIsLoading(true)
       const response = await axios.post(`${appUrl}student/signin`, user)
       const {data}= response;
       console.log(data);
       localStorage.setItem('cms-user', JSON.stringify(data));
       dispatch(setActive(data));
       navigate('/');
+     
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsLoading(false);
     }
   }
 
@@ -73,7 +82,11 @@ function SignIn() {
 
           </div>
 
-          <button type='submit' className='cms-btn cms-submit-btn'>Login</button>
+          <button type='submit' className='cms-btn cms-submit-btn'>
+            {!isLoading?<Box sx={{ display: 'flex' }}>
+                <CircularProgress className='cms-loader' />
+              </Box>:'Login'}  
+          </button>
 
 
         </form>
