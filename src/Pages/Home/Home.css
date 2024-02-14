@@ -47,7 +47,7 @@
 
 .ellipse-button:hover,
 .ellipse-button:focus{
-    opacity: 0.7;
+    border: 7px solid #171632;
 }
 
 /* Notice */
