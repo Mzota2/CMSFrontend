@@ -1,0 +1,190 @@
+header{
+    padding: 4em 4em;
+    background: #ddd;
+}
+
+header nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+}
+.logo-title{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.nav-options-container{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.nav-option{
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: rgb(36, 35, 35);
+}
+.profile-icon{
+    font-size: 3rem !important;
+    cursor: pointer;
+}
+
+.nav-user{
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.login-back{
+   
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    background-image: url('../../Assets/sign.jpg');
+    background-color: rgba(0, 0, 0, 0.638);
+    background-size: cover;
+    background-blend-mode: overlay;
+}
+
+.log-back-in-text{
+    color: white;
+    font-size: 4rem;
+    
+    
+}
+.login-btn{
+    height: 50px;
+    width: 170px;
+    color: white;
+    background-color: #89c3dc;
+    font-size: 1.5rem;
+}
+
+.mobile-nav{
+    display: none;
+}
+
+@media (max-width:1000px) {
+    .desktop-nav{
+        display: none;
+    }
+    header{
+        height: 20vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background-color: aliceblue;
+    }
+
+    .mobile-nav{
+        padding: 1em 1em;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: .4em;
+        align-self: center;
+
+    }
+
+    .mobile-nav-inner{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @keyframes slideIn {
+        from{
+            right: -100%;
+        }
+
+        to{
+            right: 0;
+        }
+        
+    }
+    
+
+    .mobile-menu{
+        width: 80%;
+        min-width: 300px;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 100;
+        padding: 2em;
+
+        animation-name: slideIn;
+        animation-duration: 1s;
+        animation-timing-function: ease;
+        animation-fill-mode: forwards;
+        
+    }
+
+    .mobile-menu .nav-options-container{
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        align-items: baseline;
+        gap: .5em;
+    }
+
+    .mobile-menu .nav-options-container .nav-option{
+        background-color: #89c3dc;
+        padding: 0.8em 2em;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .close-icon{
+        margin-bottom: .5em;
+        font-size: 2rem !important;
+        cursor: pointer;
+    }
+
+    .menu-icon:hover,
+    .menu-icon:focus{
+        color: #89c3dc !important;
+        transition: ease .5s;
+        cursor: pointer;
+    }
+
+    .close-icon:hover,
+    .close-icon:focus{
+        color: rgb(222, 163, 163);
+        transition: ease 0.5s;
+    }
+    
+}
+
+@media (max-width:600px) {
+    .logo-container h1{
+        font-size: 1.5rem !important;
+    }
+    .logo-container p{
+        font-size: 1rem;
+    }
+    .nav-user{
+        font-size: 0.8rem;
+    }
+    
+}
