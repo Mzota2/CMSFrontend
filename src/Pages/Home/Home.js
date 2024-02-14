@@ -31,7 +31,13 @@ function Home() {
         setIndex(prev => 1);
     }
 
-
+    React.useEffect(()=>{
+        const user =JSON.parse(localStorage.getItem('cms-user'));
+       
+        if(user){
+            dispatch(setActive(user));
+        }
+    }, [index])
   return (
     <div className=''>
 
@@ -54,9 +60,9 @@ function Home() {
 
 
         <div className="class-notice-board">
-            {classNotice.map((notice)=>{
+            {classNotice.map((notice, index)=>{
                 return(
-                    <div className="class-notice-container">
+                    <div key={index} className="class-notice-container">
                         <h1 className="class-notice-title">{notice}</h1>
                     </div>
                 )
