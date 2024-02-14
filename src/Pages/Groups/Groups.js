@@ -276,20 +276,26 @@ function Groups() {
 
                         <h2 className='group-task'>{collection?.task}</h2>
 
-                        {collection?.groups?.map((group, index)=>{
-                          return(
-                            <div className="group recent-group">
-                              <h3>Group {index+1}</h3>
-                              {group?.map((member, index)=>{
-                                return(
-                                  <p key={index} className='member-title'>{member}</p>
-                                )
-                              })}
-                            </div>
-                          )
-                          
+                        <div className="groups-tab">
+
+                          {collection?.groups?.map((group, index)=>{
+                            return(
+                              <div className="group recent-group">
+                                <h3>Group {index+1}</h3>
+                                {group?.map((member, index)=>{
+                                  return(
+                                    <p key={index} className='member-title'>{member}</p>
+                                  )
+                                })}
+                              </div>
+                            )
                             
-                        })}
+                              
+                          })}
+
+                        </div>
+
+                        
                       </div>
                     )
                   }):<></>}

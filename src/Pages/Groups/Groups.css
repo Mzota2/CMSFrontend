@@ -138,6 +138,13 @@
     gap: 1em;
     margin-top: 2em;
 }
+.groups-tab{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    flex-wrap: wrap;
+}
 
 .recent-groups-section{
     flex-direction: column;
