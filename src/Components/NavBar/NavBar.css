@@ -194,8 +194,8 @@ header nav{
         box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.438);
         gap: 2em;
         padding: 1em 0;
-        animation-duration: 2s;
-        animation-timing-function: ease;
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
         animation-fill-mode: forwards;
         align-items: center;
         
@@ -245,7 +245,7 @@ header nav{
 
     .menu-icon:hover,
     .menu-icon:focus{
-        color: #89c3dc !important;
+        color: var(--light-blue) !important;
         transition: ease .5s;
         cursor: pointer;
     }

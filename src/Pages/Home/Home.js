@@ -319,8 +319,10 @@ function Home() {
                 {!isWeekend?todayModule?.map((today)=>{
                     return(
                         <div key={today?._id} className="cms-today-cls cms-today-animate cms-today-cls-mobile">
+                            
                             <p>{today?.code}</p>
                             <p>{today?.lecturer}</p>
+    
                         </div>
                     )
                 }):<></>}
