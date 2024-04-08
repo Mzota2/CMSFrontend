@@ -9,9 +9,9 @@ function PersisistLogin() {
     const studentStatus = useSelector(state => state.students.status);
     const [isActive, setIsActive] = React.useState();
     const dispatch = useDispatch();
-    React.useEffect(()=>{
-      setIsActive(activeStudent)
-    }, [activeStudent]);
+    // React.useEffect(()=>{
+    //   setIsActive(activeStudent);
+    // }, [activeStudent]);
   
     return(
         <div>

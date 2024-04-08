@@ -1,0 +1,23 @@
+.cms-settings-container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    padding: 1em;
+    
+}
+.cms-password-match{
+    border: 2px solid green !important;
+    box-shadow: none !important;
+}
+
+.cms-password-diff{
+    border: 2px solid red !important;
+}
+
+.cms-btn-save{
+    max-width: 200px;
+}

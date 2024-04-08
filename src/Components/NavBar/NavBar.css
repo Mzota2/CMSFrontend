@@ -1,6 +1,13 @@
 header{
-    padding: 4em 4em;
-    background: #ddd;
+    padding: 2em 4em;
+    background: hwb(246 15% 64% / 0.87);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    left: 0;
+    z-index: 100;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.155);
+
 }
 
 header nav{
@@ -14,28 +21,61 @@ header nav{
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: black;
+    color: white;
 }
 .logo-title{
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
     letter-spacing: 3px;
+    color: white;
 }
 
 .nav-options-container{
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 1.5em;
+
 }
+
 
 .nav-option{
     font-size: 1.25rem;
     text-decoration: none;
-    color: rgb(36, 35, 35);
+    color: white;
+}
+.nav-option-icon{
+    color: var(--light-blue);
+}
+ 
+.nav-option-container{
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+    cursor: pointer;
+    padding: 1em 0;
+}
+
+.nav-option-container:hover .nav-option,
+.nav-option-container:focus .nav-option{
+    color: var(--light-blue);
+}
+
+.nav-option-container:hover .nav-option-icon,
+.nav-option-container:focus .nav-option-icon{
+    color: white;
+}
+
+.active-nav-option{
+    color: var(--light-blue);
+}
+
+.active-nav-icon{
+    color: white;
 }
 .profile-icon{
     font-size: 3rem !important;
     cursor: pointer;
+    color: white;
 }
 
 .nav-user{
@@ -72,7 +112,7 @@ header nav{
     font-size: 1.5rem;
 }
 
-.mobile-nav{
+.mobile-cms-nav{
     display: none;
 }
 
@@ -81,79 +121,121 @@ header nav{
         display: none;
     }
     header{
-        height: 20vh;
+        height: fit-content;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 0;
-        background-color: aliceblue;
+        padding: .5em 1em;
     }
 
-    .mobile-nav{
-        padding: 1em 1em;
+    .mobile-cms-nav{
         width: 100%;
         display: flex;
         align-items: center;
-        flex-direction: column;
-        gap: .4em;
-        align-self: center;
-
+        justify-content: space-between;
+        padding: 0;
+      
     }
 
     .mobile-nav-inner{
-        width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
+    .cms-mobile-menu-close-icon-container{
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background-color: var(--dark-blue);
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        flex-shrink: 0;
+        align-self: center;
+    }
+   
+
     @keyframes slideIn {
         from{
-            right: -100%;
+            left: -100%;
         }
 
         to{
-            right: 0;
+            left: 0;
         }
         
+    }
+
+    @keyframes slideOut {
+         from{
+            left: 0;
+        }
+
+        to{
+            left: -100%;
+        }
     }
     
 
     .mobile-menu{
-        width: 80%;
-        min-width: 300px;
-        max-width: 500px;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         background-color: white;
         position: absolute;
         top: 0;
-        right: 0;
+        left: 0;
         z-index: 100;
-        padding: 2em;
-
-        animation-name: slideIn;
-        animation-duration: 1s;
+        padding: 0;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.438);
+        gap: 2em;
+        padding: 1em 0;
+        animation-duration: 2s;
         animation-timing-function: ease;
         animation-fill-mode: forwards;
+        align-items: center;
         
     }
 
     .mobile-menu .nav-options-container{
         display: flex;
         flex-direction: column;
-        background-color: white;
         align-items: baseline;
         gap: .5em;
+        padding: 0 1em;
+       
     }
 
-    .mobile-menu .nav-options-container .nav-option{
-        background-color: #89c3dc;
-        padding: 0.8em 2em;
+    .mobile-menu .nav-option-container{
+        padding: 0.3em .7em;
         width: 100%;
         font-size: 1rem;
+        color: black;
     }
+    .nav-option{
+        color: black;
+    }
+
+    .nav-option-container:hover,
+    .nav-option-container:focus{
+        transition: ease .5s;
+        background-color: var(--smooth-blue);
+    }
+
+    .nav-option-container:hover .nav-option,
+    .nav-option-container:focus .nav-option{
+        color: var(--light-blue);
+    }
+
+    .nav-option-container:hover .nav-option-icon,
+    .nav-option-container:focus .nav-option-icon{
+        color: black;
+    }
+
 
     .close-icon{
         margin-bottom: .5em;
@@ -174,6 +256,15 @@ header nav{
         transition: ease 0.5s;
     }
     
+    .menu-icon{
+        color: white !important;
+    }
+
+    .nav-option-icon{
+        font-size: 2.3rem !important;
+    }
+
+    
 }
 
 @media (max-width:600px) {
@@ -186,5 +277,20 @@ header nav{
     .nav-user{
         font-size: 1.2rem;
     }
+
+ 
+
     
+}
+
+@media (max-height:600px){
+    
+    .mobile-menu{
+        height: 100vh;
+        overflow-x: auto !important;
+        gap: 1em;
+    }
+
+    
+
 }

@@ -1,0 +1,152 @@
+@keyframes slideInA {
+    from{
+        right: -100%;
+    }
+
+    to{
+        right: 0;
+    }
+    
+}
+
+@keyframes slideOutA {
+    from{
+        right: 0;
+    }
+
+    to{
+        right: -100%;
+    }
+}
+
+.cms-account-container{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 90%;
+    max-width: 300px;
+    background-color: white !important;
+    box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.55);
+    z-index: 2;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    height: 100vh;
+    animation-duration: 2s;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+    overflow-y: auto;
+}
+
+.cms-account-close-btn{
+    position: static !important;
+    align-self: center !important;
+}
+
+/* USER INFO */
+
+.cms-account-user-info-container{
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+ 
+}
+.cms-account-user-main-info{
+    display:flex;
+    align-items: center;
+    gap: 1em;
+}
+.cms-account-icon{
+    color: var(--light-blue);
+    font-size: 3rem !important;
+}
+
+.cms-account-user-name{
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.cms-account-user-regNO{
+    color: rgb(61, 61, 61);
+    font-size: 0.85rem;
+    margin-top: .5em;
+}
+
+.cms-account-user-edit-icon-container{
+    height: 30px;
+    width: 30px;
+    background-color: var(--light-blue);
+    border-radius: 50%;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.206);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+    cursor: pointer;
+}
+
+.cms-account-user-edit-icon{
+    color: orange;
+    font-size: 1rem !important;
+}
+
+/* class info */
+.cms-account-user-class-info-container{
+    display: flex;
+    flex-direction: column;
+    gap: .7em;
+}
+
+.cms-account-user-class-info{
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    padding: .6em 1em;
+    cursor: pointer;
+}
+
+.cms-account-user-class-info:hover ,
+.cms-account-user-class-info:focus{
+    transition: .5s ease;
+    background-color: var(--smooth-blue);
+}
+
+
+.cms-account-user-class-info-icon{
+    color: var(--light-blue);
+}
+
+/* class important */
+
+.cms-account-user-important-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.cms-account-user-important-icon{
+    color: var(--light-blue);
+}
+
+.cms-account-user-important{
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    padding: .6em 1em;
+    cursor: pointer;
+}
+.cms-logout-icon{
+    color: rgba(134, 18, 18, 0.8) !important;
+}
+.cms-account-user-important:hover ,
+.cms-account-user-important:focus{
+    transition: .5s ease;
+    background-color: var(--smooth-blue);
+}
+
+
+.cms-link{
+    text-decoration: none;
+    color: black;
+}

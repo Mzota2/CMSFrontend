@@ -1,0 +1,84 @@
+
+.cms-assign-cls{
+    flex-direction: column !important;
+    
+}
+.cms--assignment-details-container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    z-index: 1;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.cms-assign-drop-icon{
+    cursor: pointer;
+    margin-left: auto !important;
+    font-size: 2rem !important;
+}
+
+.cms-assign-drop-icon:hover,
+.cms-assign-drop-icon:focus{
+    color: var(--dark-blue);
+    transition: ease .5s;
+}
+
+@keyframes toggleDesc{
+    from{
+        margin-top: -20%;
+    }
+    to{
+        margin-top: 0%;
+    }
+}
+
+.cms-assignment-description-container{
+    z-index: 0 !important;
+    animation-name: toggleDesc;
+    animation-duration: 1s;
+    animation-timing-function: ease;
+    animation-fill-mode:both;
+    padding: 1em 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+}
+
+.cms-assign-tabs{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+.cms-assign-title{
+    color: var(--light-blue);
+}
+.cms-add-assign-btn{
+    color: white;
+    font-size: 1rem ;
+    padding: .3em .5em ;
+    background-color: var(--dark-blue) !important;
+    cursor: pointer;
+}
+
+.cms-assign-field{
+    border: 1px solid var(--dark-blue) !important;
+
+}
+
+.cms-assign-form{
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 100%;
+    max-width: 700px;
+}
+
+.cms-create-assign-btn{
+    font-size: 1rem;
+    background-color: green;
+    color: white;
+    max-width: 300px;
+    width: 100%;
+    align-self: center;
+}

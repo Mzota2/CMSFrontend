@@ -6,22 +6,47 @@ import Groups from "./Pages/Groups/Groups";
 import Home from "./Pages/Home/Home";
 import SignIn from "./Pages/SignIn/SignIn";
 import Dashboard from "./Dashboard";
-import { useDispatch } from "react-redux";
-import { setActive } from "./State/StudentsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getStudents, setActive } from "./State/StudentsSlice";
 import PersisistLogin from "./PersisistLogin";
+import Modules from "./Pages/Modules/Modules";
+import Classes from "./Pages/Classes/Classes";
+import Students from "./Pages/Students/Students";
+import Settings from "./Pages/Settings/Settings";
 
 function App() {
   const dispatch = useDispatch();
+  const foundUser = JSON.parse(localStorage.getItem('cms-user'));
+
+  const foundStudents = useSelector(state => state.students.data);
+  const studentStatus = useSelector(state => state.students.status);
+
+  
+  function removeCredentials(){
+    setTimeout(()=>{
+      localStorage.removeItem('cms-user');
+    }, 1000*60*60*24);  // remove after a day
+  }
 
   React.useEffect(()=>{
-    const user =JSON.parse(localStorage.getItem('cms-user'));
-   
-    if(user){
-        dispatch(setActive(user));
+  
+    if(studentStatus === 'idle'){
+      dispatch(getStudents())
     }
-    
 
-}, [])
+    else if(studentStatus !== 'idle'){
+      if(foundUser){
+        const activeStudent = foundStudents?.find(std => std._id === foundUser?.studentId);
+        if(activeStudent){
+          dispatch(setActive(activeStudent)); //set active students
+        
+        }
+      }
+    }
+
+    removeCredentials(); //runs after 24 hours
+
+}, [dispatch, foundUser, studentStatus, foundStudents])
 
   return (
     <div className="App">
@@ -32,8 +57,14 @@ function App() {
       <Route path="/" element={<PersisistLogin/>}>
         <Route path="/" element={<Dashboard/>}>
           <Route path="/" element={<Home/>} />
-          <Route path='/groups' element={<Groups/>} />
+          <Route path="/students" element={<Students/>} />
+          <Route path="/modules" element={<Modules/>}/>
+          <Route path="/classes" element={<Classes/>}/>
+          
         </Route>
+        <Route path="/settings" element={<Settings/>} />
+        <Route path='/groups' element={<Groups/>} />
+       
       </Route>
       
      </Routes>

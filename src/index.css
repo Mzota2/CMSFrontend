@@ -9,3 +9,11 @@
 body{
   font-family: 'Lato', sans-serif;
 }
+
+:root{
+  --blue-color:#2c275c;
+  --light-blue:#21a7e0;
+  --smooth-blue:rgb(250, 252, 255);
+  --dark-blue:#107dac;
+}
+

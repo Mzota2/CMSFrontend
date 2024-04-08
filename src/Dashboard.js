@@ -5,9 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 function Dashboard() {
   const activeStudent = useSelector(state => state.students.activeUser);
-  const studentStatus = useSelector(state => state.students.status);
-  const [isActive, setIsActive] = React.useState();
-  const dispatch = useDispatch();
 
   if(!activeStudent){
     return <div className='login-back'>

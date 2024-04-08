@@ -6,6 +6,7 @@ export const getStudents = createAsyncThunk('students/getStudents', async()=>{
     try {
         const response = await axios.get(`${appUrl}student`);
         const {data} = response;
+        console.log(data);
         return data;
     } catch (error) {
         console.log(error);
@@ -15,6 +16,7 @@ export const getStudents = createAsyncThunk('students/getStudents', async()=>{
 const initialState = {
     isRep:false,
     data:[],
+    modules:[],
     status:'idle',
     error:null,
     activeUser:undefined
@@ -30,6 +32,10 @@ const studentsSlice = createSlice({
 
         setActive:(state, action)=>{
             state.activeUser = action.payload;
+        },
+
+        setActiveModules:(state, action)=>{
+            state.modules = action.payload;
         }
         
     },
@@ -47,5 +53,5 @@ const studentsSlice = createSlice({
     }
 });
 
-export const {setActive} = studentsSlice.actions;
+export const {setActive, setActiveModules} = studentsSlice.actions;
 export default studentsSlice.reducer;
