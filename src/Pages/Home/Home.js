@@ -127,7 +127,7 @@ function Home() {
 
         else if((moduleStatus !== 'idle') && activeUser){
             setIsLoading(false);
-            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const days = ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const date = new Date();
             const day = date.getDay();
            
