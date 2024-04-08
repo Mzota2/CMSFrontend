@@ -199,7 +199,8 @@
     gap: 1em;
     align-items: center;
     justify-content: center;
-    animation:scroll 40s linear infinite;
+    animation:scroll 20s linear infinite;
+    transform: translateY(100%);
 }
 
 .cms-notice-animation-track:hover,
@@ -209,11 +210,12 @@
 
 @keyframes scroll{
     0%{
-        transform: translateY(0);
+        transform: translateY(100%);
 
     }
     100%{
-        transform: translateY(calc(-40px * 9));
+        /* transform: translateY(calc(-40px * 9)); */
+        transform: translateY(calc(-100%));
     }
 }
 
