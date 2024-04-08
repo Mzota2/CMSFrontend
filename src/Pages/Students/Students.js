@@ -94,6 +94,8 @@ function Students() {
 
     async function addStudent(student){
         try {
+
+            console.log(student);
             setIsLoading(true);
             const response = await axios.post(`${appUrl}student`, student);
             const {data} = response;

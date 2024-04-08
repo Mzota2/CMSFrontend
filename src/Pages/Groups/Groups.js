@@ -539,7 +539,6 @@ function Groups() {
       <div>
 
        
-
           {/* <div className='group-creator-container'>
                   <h2 className='group-creator-title'>Quick Group Creator</h2>
                   <p>Enter student names separated by comma</p>
@@ -730,7 +729,6 @@ function Groups() {
                      
 
                     </div>
-
 
 
                     <div className="cms-recently-created-groups-container">

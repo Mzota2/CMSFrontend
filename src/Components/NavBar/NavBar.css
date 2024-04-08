@@ -277,20 +277,15 @@ header nav{
     .nav-user{
         font-size: 1.2rem;
     }
-
  
-
-    
 }
+
 
 @media (max-height:600px){
     
     .mobile-menu{
         height: 100vh;
-        overflow-x: auto !important;
-        gap: 1em;
+        gap: 2em;
     }
-
-    
 
 }

@@ -10,6 +10,8 @@ import Loader from '../../Components/Loader/Loader';
 
 function Announcement() {
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const dispatch = useDispatch();
 
     //announcements
@@ -99,21 +101,22 @@ function Announcement() {
     useEffect(()=>{
 
         if(announcementsStatus === 'idle'){
+            setIsLoading(true)
             dispatch(getAnnouncements());
         }
 
         else if(announcementsStatus !== 'idle'){
             setAnnouncements(foundAnnouncements);
-
+            setIsLoading(false);
             removeInvalidAnnouncements();
         }
 
 
     }, [dispatch, announcementsStatus, foundAnnouncements]);
 
-    if(announcementsStatus === 'idle'){
-        return <Loader/>
-    }
+    // if(isLoading){
+    //     return <Loader/>
+    // }
   return (
     <div className='cms-announcements-section'>
 
