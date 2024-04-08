@@ -13,6 +13,7 @@ import Modules from "./Pages/Modules/Modules";
 import Classes from "./Pages/Classes/Classes";
 import Students from "./Pages/Students/Students";
 import Settings from "./Pages/Settings/Settings";
+import Announcement from "./Pages/Announcement/Announcement";
 
 function App() {
   const dispatch = useDispatch();
@@ -64,6 +65,7 @@ function App() {
         </Route>
         <Route path="/settings" element={<Settings/>} />
         <Route path='/groups' element={<Groups/>} />
+        <Route path='/announcements' element={<Announcement/>} />
        
       </Route>
       

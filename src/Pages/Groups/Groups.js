@@ -182,10 +182,9 @@ function Groups() {
         return collection;
       }
 
-      
-
       else{
         window.alert(`Please select ${collection.length} students`);
+        return [];
       }
 
     
@@ -232,42 +231,45 @@ function Groups() {
         }
        
         
-          if(groupCount >= groupNumber && remainder){
-   
-           if(additional.length >= students -1 ){
-             groups.push(additional);
-           }
-           else{
-             var groupLength = groups.flat().length;
-             console.log(groups.flat());
-      
-             while(groupLength < collection.length){
-    
-               let groupIndex = generateRandom(groups);
-               let additionalIndex = generateRandom(additional);
-               const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
-               console.log(foundAdditional);
-               if(groups[groupIndex].length < students + 1){
-                  if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
-                    groups[groupIndex].push(additional[additionalIndex]);
-                  
-                  }
-               }
-     
-               
-            
-               groupLength = groups.flat().length;
-             
-             }
-           }
-            
-    
+        if(groupCount >= groupNumber && remainder){
+  
+          if(additional.length >= students -1 ){
+            groups.push(additional);
           }
+          else{
+            var groupLength = groups.flat().length;
+            console.log(groups.flat());
+    
+            while(groupLength < collection.length){
+  
+              let groupIndex = generateRandom(groups);
+              let additionalIndex = generateRandom(additional);
+              const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
+              console.log(foundAdditional);
+              if(groups[groupIndex].length < students + 1){
+                if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
+                  groups[groupIndex].push(additional[additionalIndex]);
+                
+                }
+              }
+    
+              
           
+              groupLength = groups.flat().length;
+            
+            }
+          }
+
           console.log(groups);
-         const finalG = [...addRep(groups, groupReps)];
-         setResultGroups(finalG);
-         console.log(finalG)
+
+          
+          const finalG = [...addRep(groups, groupReps)];
+          setResultGroups(finalG);
+          console.log(finalG)
+          
+  
+        }
+          
        }
        else{
         window.alert('You have inadequate number of students to form groups')
@@ -315,36 +317,35 @@ function Groups() {
         
        }
   
-         if(groupCount === number && remainder){
-           var groupLength = groups.flat().length;
-           console.log(groups.flat());
-           let additionalCount = 0;
-           
-         
-           
-           while(groupLength < collection.length){
-             let groupIndex = generateRandom(groups);
-             let additionalIndex = generateRandom(additional);
-             const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
-             console.log(foundAdditional);
-   
-             if(groups[groupIndex].length < membersNum + 1){
-               if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
-                 groups[groupIndex].push(additional[additionalIndex]);
-               
-               }
-            }
-          
-             groupLength = groups.flat().length;
-           
-           }
-   
-         }
-         
-          const finalG = [...addRep(groups, groupReps)];
-         
-          setResultGroups(finalG);
+      if(groupCount === number && remainder){
+        var groupLength = groups.flat().length;
+        console.log(groups.flat());
+        let additionalCount = 0;
         
+      
+        
+        while(groupLength < collection.length){
+          let groupIndex = generateRandom(groups);
+          let additionalIndex = generateRandom(additional);
+          const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
+          console.log(foundAdditional);
+
+          if(groups[groupIndex].length < membersNum + 1){
+            if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
+              groups[groupIndex].push(additional[additionalIndex]);
+            
+            }
+        }
+      
+          groupLength = groups.flat().length;
+        
+        }
+
+        const finalG = [...addRep(groups, groupReps)];
+      
+        setResultGroups(finalG);
+
+      }
      }
 
      else{

@@ -110,7 +110,7 @@ function Classes() {
     console.log(updateModule);
     const result = {...updateModule};
     if(updateModule){
-      result.isCancelled = bool;
+      result.isCancelled = !bool;
       const index = selectedModule?.classDays?.indexOf(updateModule);
 
       const moduleClassDays = [...selectedModule?.classDays];

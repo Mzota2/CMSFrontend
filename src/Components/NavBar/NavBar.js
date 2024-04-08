@@ -126,7 +126,7 @@ function NavBar() {
                         
                     </div>
                     
-                    <div onClick={()=>{navigate('/')}} className="nav-option-container">
+                    <div className="nav-option-container">
                         <People className={`'active-nav-icon'} nav-option-icon`} />
                         
                     </div>

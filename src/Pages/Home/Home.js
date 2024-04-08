@@ -20,9 +20,12 @@ import { current } from '@reduxjs/toolkit';
 import Account from '../../Components/Account/Account';
 import {ExpandLess, ExpandMore, Brightness1} from '@mui/icons-material'
 import Loader from '../../Components/Loader/Loader';
+import {useNavigate} from 'react-router-dom';
+import {getAnnouncements} from '../../State/AnnouncementsSlice';
 
 function Home() {
 
+    const navigate = useNavigate();
     //
     const [isLoading, setIsLoading] = useState(false);
 
@@ -71,6 +74,12 @@ function Home() {
 
     //active user
     const activeUser = useSelector(state => state.students.activeUser);
+
+
+      //announcements
+      const foundAnnouncements = useSelector(state => state.announcements.data);
+      const announcementsStatus = useSelector(state => state.announcements.status);
+      const [announcements, setAnnouncements] = useState([]);
 
 
     //expand floating action button
@@ -177,10 +186,20 @@ function Home() {
             
         }
 
+        if(announcementsStatus === 'idle'){
+            dispatch(getAnnouncements());
+        }
+
+        else if(announcementsStatus !== 'idle'){
+            setAnnouncements(foundAnnouncements);
+            console.log(announcements);
+
+        }
+
         // setInterval(runAnimations, 10000);
         // runAnimations();
 
-    }, [index, dispatch, moduleStatus, foundModules]);
+    }, [index, dispatch, moduleStatus, foundModules, announcementsStatus, foundAnnouncements]);
 
 
 
@@ -208,17 +227,17 @@ function Home() {
 
                     <div className="cms-notice-animation-track">
 
-                    {classNotice?.map((notice, index)=>{
+                    {announcements?.map((notice, index)=>{
                         //console.log(randomAnimation);
         
                             return(
-                                <div style={{animationDelay:`${(index+1)*100}ms`}} key={index} className={`cms-notice-container`}>
-                                    <h1 className="cms-notice-title">{notice}</h1>
+                                <div onClick={()=>{navigate('/announcements')}} style={{animationDelay:`${(index+1)*100}ms`}} key={index} className={`cms-notice-container`}>
+                                    <h1 className="cms-notice-title">{notice?.agenda}</h1>
                                     
                                     <div className="cms-notice-date-time">
-                                        <p className='cms-notice-time'>16:30pm</p>
+                                        <p className='cms-notice-time'>{notice?.time}</p>
                 
-                                        <p className='cms-notice-day'>30 March 2024</p>
+                                        <p className='cms-notice-day'>{notice?.date}</p>
                                     </div>
                                     
                                 </div>
@@ -230,7 +249,8 @@ function Home() {
                     </div>
                    
 
-                    <div className="cms-notice-expand-icon">
+                    
+                    <div onClick={()=>{navigate('/announcements')}} className="cms-notice-expand-icon">
                         <OpenInFullIcon className='cms-expand-icon' />
                     </div>
 

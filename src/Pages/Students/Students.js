@@ -33,6 +33,7 @@ function Students() {
         username:'',
         regNO:'',
         email:'',
+        isClassRep:false
     });
 
     const [isLoading, setIsLoading] = React.useState(false);
@@ -63,10 +64,12 @@ function Students() {
             return{
                 username: fdStudent?.username,
                 regNO: fdStudent?.regNO,
-                email:fdStudent?.email
+                email:fdStudent?.email,
+                isClassRep:fdStudent?.isClassRep
             
             }
         });
+
     }
 
     function handleChangeStudent(e){
@@ -75,6 +78,15 @@ function Students() {
             [e.target.name]:e.target.value
         }
     })}
+
+    function handleChangePosition(e){
+        setStudent(prev =>{
+            return{
+                ...prev,
+                isClassRep:!prev?.isClassRep
+            }
+        })
+    }
 
     function handleChangeSearch(e){
         setSearch(e.target.value);
@@ -190,7 +202,7 @@ function Students() {
     async function updateStudent(studentId){
         try {
             setIsLoading(true);
-            const response = await axios.put(`${appUrl}student/${studentId}`, {username:student.username, regNO:student.regNO, email:student.email});
+            const response = await axios.put(`${appUrl}student/${studentId}`, {username:student.username, regNO:student.regNO, email:student.email, isClassRep:student.isClassRep});
             const {data} = response;
             console.log(data);
             
@@ -227,7 +239,7 @@ function Students() {
         console.log(studentsPage.endIndex);
         console.log(filterStudents);
 
-    }, [dispatch, studentsStatus, filterStudents, programsStatus]);
+    }, [dispatch, studentsStatus, student, filterStudents, programsStatus]);
 
 
     if(studentsStatus === 'idle'){
@@ -271,6 +283,7 @@ function Students() {
 
 
                         <select name='program' value={values.program} onChange={handleChange} className='cms-field cms-add-student-field' >
+                            <option value=""></option>
                             {programs?.map((program, index)=>{
                                 return (
                                     <option key={index} value={program?._id}>{program?.name}</option>
@@ -306,6 +319,10 @@ function Students() {
                     <input name='email' id='email' value={student.email} onChange={handleChangeStudent} className='cms-field cms-add-student-field' type="email" placeholder='Enter student email' />
                     <input name='regNO' id='regNO' value={student.regNO} onChange={handleChangeStudent} className='cms-field cms-add-student-field' type="text" placeholder='Enter student reg number' />
                         
+                    <div className="cms-isClassrepContainer">
+                            <input value={student?.isClassRep} onChange={handleChangePosition} checked={student?.isClassRep} id='classrep' name='isClassRep' className='checkPassword' type="checkbox" />
+                            <label htmlFor="classrep">check if class rep</label>
+                    </div>
 
                     <button onClick={()=>updateStudent(studentId)} type='button' className='cms-btn add-student-btn'> {isLoading? <CircularProgress className='cms-loader'/>: 'Update'}</button>
                 </form>
