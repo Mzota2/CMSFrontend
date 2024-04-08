@@ -287,6 +287,18 @@
    
 }
 
+
+.cms-load-groups{
+    color: white;
+    display: flex !important;
+    justify-content: center;
+    width: 100%;
+}
+
+.cms-group-loader{
+    color: white !important;
+}
+
 .group{
     width: 100%;
     max-width: 350px;
@@ -387,7 +399,8 @@
 
 /* Created groups */
 .cms-recently-created-groups-container{
-    flex-direction: column;
+    display: grid;
+    grid-column: auto auto;
     max-width: 100%;
     border: none;
 }
@@ -472,6 +485,9 @@
     color: black;
     transition: .5s ease;
 }
+
+
+/* other */
 
 
 @media (max-width:900px) {

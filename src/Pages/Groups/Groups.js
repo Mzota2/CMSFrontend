@@ -16,10 +16,13 @@ import {Close, ArrowBack, ArrowForward} from '@mui/icons-material';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import { useRef } from 'react';
 import Loader from '../../Components/Loader/Loader';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box'
 
 function Groups() {
 
     const [isLoading, setIsLoading] = useState(false);
+    const [pending, setPending]= useState(false);
 
     const [assignPage, setAssignPage] = useState({
       index:0,
@@ -120,10 +123,14 @@ function Groups() {
   
     async function confirmGroups(){
       try {
+        setResultGroups([]);
         const group = {groups:resultGroups, task:taskTitle, moduleId:selectedModule, type:'group'};
         console.log(selectedModule);
+        const activeModule = studentModules?.find((md)=> md?._id === selectedModule);
+
+        const updatedAssignments = [...activeModule?.assignments, group];
         
-        const response = await axios.put(`${appUrl}module/${selectedModule}`, {assignments:group})
+        const response = await axios.put(`${appUrl}module/${selectedModule}`, {assignments:updatedAssignments})
         const {data} = response;
 
         console.log(data);
@@ -196,162 +203,173 @@ function Groups() {
        //members num = students;
 
        
-       if(collection?.length > 3){
-        let groupCount = 0;
-        const groups = [];
-        const groupNumber = Math.trunc((collection.length / students)) ;
-        
-        console.log(groupNumber)
-        const remainder = collection.length % students;
-        let newCollection = collection.slice(0, collection.length - remainder);
-        const additional = collection.slice(collection.length - remainder);
-       
-        //remainder of participants
-        //what to do
-        //add them randomly to the groups
-        //adding the remaining groups using another loop
-    
-        while(groupCount < groupNumber){
+      setPending(true);
+
+       setTimeout(()=>{
+
+        if(collection?.length > 3){
+          let groupCount = 0;
+          const groups = [];
+          const groupNumber = Math.trunc((collection.length / students)) ;
           
-          let group = [];
-    
-          while(group.length < students){
-            let randomNumber = generateRandom(newCollection);
-            const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]))
-    
-            if((!group.includes(newCollection[randomNumber])) && (!foundMatch)){
-              group.push(newCollection[randomNumber]);
-            }
-            
-          }
-    
-          groups.push(group);
-          groupCount = groupCount + 1;
+          console.log(groupNumber)
+          const remainder = collection.length % students;
+          let newCollection = collection.slice(0, collection.length - remainder);
+          const additional = collection.slice(collection.length - remainder);
          
-        }
-       
-        
-        if(groupCount >= groupNumber && remainder){
-  
-          if(additional.length >= students -1 ){
-            groups.push(additional);
-          }
-          else{
-            var groupLength = groups.flat().length;
-            console.log(groups.flat());
-    
-            while(groupLength < collection.length){
-  
-              let groupIndex = generateRandom(groups);
-              let additionalIndex = generateRandom(additional);
-              const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
-              console.log(foundAdditional);
-              if(groups[groupIndex].length < students + 1){
-                if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
-                  groups[groupIndex].push(additional[additionalIndex]);
-                
-                }
-              }
-    
-              
-          
-              groupLength = groups.flat().length;
+          //remainder of participants
+          //what to do
+          //add them randomly to the groups
+          //adding the remaining groups using another loop
+      
+          while(groupCount < groupNumber){
             
+            let group = [];
+      
+            while(group.length < students){
+              let randomNumber = generateRandom(newCollection);
+              const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]))
+      
+              if((!group.includes(newCollection[randomNumber])) && (!foundMatch)){
+                group.push(newCollection[randomNumber]);
+              }
+              
             }
+      
+            groups.push(group);
+            groupCount = groupCount + 1;
+           
           }
-
-          console.log(groups);
-
+         
           
-          const finalG = [...addRep(groups, groupReps)];
-          setResultGroups(finalG);
-          console.log(finalG)
-          
+          if(groupCount >= groupNumber && remainder){
+    
+            if(additional.length >= students -1 ){
+              groups.push(additional);
+            }
+            else{
+              var groupLength = groups.flat().length;
+              console.log(groups.flat());
+      
+              while(groupLength < collection.length){
+    
+                let groupIndex = generateRandom(groups);
+                let additionalIndex = generateRandom(additional);
+                const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
+                console.log(foundAdditional);
+                if(groups[groupIndex].length < students + 1){
+                  if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
+                    groups[groupIndex].push(additional[additionalIndex]);
+                  
+                  }
+                }
+      
+                
+            
+                groupLength = groups.flat().length;
+              
+              }
+            }
   
-        }
-          
-       }
-       else{
-        window.alert('You have inadequate number of students to form groups')
-       }
+            console.log(groups);
+  
+            
+            const finalG = [...addRep(groups, groupReps)];
+            setResultGroups(finalG);
+            console.log(finalG)
+            
+    
+          }
+            
+         }
+         else{
+          window.alert('You have inadequate number of students to form groups')
+         }
+
+         setPending(false);
+       
+        } ,1000)
      
-  
     }
 
-  
+
     function formGroupsByGroup(collection, number){
-     
-     if(collection?.length >  3){
-       //numver of groups = collection.length/number
-       let groupCount = 0;
-       const groups = [];
-       const membersNum = Math.trunc((collection.length / number)) ;
+      setPending(true)
+      setTimeout(()=>{
 
-       
-       console.log(membersNum)
-       const remainder = collection.length % number;
-       let newCollection = collection.slice(0, collection.length - remainder);
-       const additional = collection.slice(collection.length - remainder);
+        if(collection?.length >  3){
+          //numver of groups = collection.length/number
+          let groupCount = 0;
+          const groups = [];
+          const membersNum = Math.trunc((collection.length / number)) ;
    
-       //remainder of participants
-       //what to do
-       //add them randomly to the groups
-       //adding the remaining groups using another loop
-   
-       while(groupCount < number){
-         
-         let group = [];
-   
-         while(group.length < membersNum){
-           let randomNumber = generateRandom(newCollection);
-           const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]))
-   
-           if((!group.includes(newCollection[randomNumber])) && (!foundMatch)){
-             group.push(newCollection[randomNumber]);
-           }
-           
-         }
-   
-         groups.push(group);
-         groupCount = groupCount + 1;
-        
-       }
-  
-      if(groupCount === number && remainder){
-        var groupLength = groups.flat().length;
-        console.log(groups.flat());
-        let additionalCount = 0;
-        
+          
+          console.log(membersNum)
+          const remainder = collection.length % number;
+          let newCollection = collection.slice(0, collection.length - remainder);
+          const additional = collection.slice(collection.length - remainder);
       
-        
-        while(groupLength < collection.length){
-          let groupIndex = generateRandom(groups);
-          let additionalIndex = generateRandom(additional);
-          const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
-          console.log(foundAdditional);
-
-          if(groups[groupIndex].length < membersNum + 1){
-            if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
-              groups[groupIndex].push(additional[additionalIndex]);
+          //remainder of participants
+          //what to do
+          //add them randomly to the groups
+          //adding the remaining groups using another loop
+      
+          while(groupCount < number){
             
+            let group = [];
+      
+            while(group.length < membersNum){
+              let randomNumber = generateRandom(newCollection);
+              const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]))
+      
+              if((!group.includes(newCollection[randomNumber])) && (!foundMatch)){
+                group.push(newCollection[randomNumber]);
+              }
+              
             }
-        }
       
-          groupLength = groups.flat().length;
-        
+            groups.push(group);
+            groupCount = groupCount + 1;
+           
+          }
+     
+         if(groupCount === number && remainder){
+           var groupLength = groups.flat().length;
+           console.log(groups.flat());
+           let additionalCount = 0;
+           
+         
+           
+           while(groupLength < collection.length){
+             let groupIndex = generateRandom(groups);
+             let additionalIndex = generateRandom(additional);
+             const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
+             console.log(foundAdditional);
+   
+             if(groups[groupIndex].length < membersNum + 1){
+               if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
+                 groups[groupIndex].push(additional[additionalIndex]);
+               
+               }
+           }
+         
+             groupLength = groups.flat().length;
+           
+           }
+   
+           const finalG = [...addRep(groups, groupReps)];
+         
+           setResultGroups(finalG);
+   
+         }
+        }
+   
+        else{
+         window.alert('You have inadequate number of students to form groups')
         }
 
-        const finalG = [...addRep(groups, groupReps)];
-      
-        setResultGroups(finalG);
-
-      }
-     }
-
-     else{
-      window.alert('You have inadequate number of students to form groups')
-     }
-
+        setPending(false);
+      }, 1000)
      
     }
 
@@ -653,7 +671,7 @@ function Groups() {
 
 
                 <div className="groups-container">
-                            {resultGroups?.length? [resultGroups[assignPage?.index]]?.map((group, index)=>{
+                            {resultGroups?.length? resultGroups?.map((group, index)=>{
                               return(
                                 <div key={index} className="group">
                                   <h3>Group {index+1}</h3>
@@ -670,8 +688,14 @@ function Groups() {
                               )
                             }):<></>}
 
+                            
+                            {pending&&<Box className='cms-load-groups'>
+                              <CircularProgress className='cms-group-loader' />
+                           </Box>}
 
-                            <h2 className='cms-created-appear-text'>Created groups will appear here</h2>
+                          {!resultGroups.length ?<h2 className='cms-created-appear-text'>Created groups will appear here</h2>:<></>}
+
+
                 </div>
 
               </div>
