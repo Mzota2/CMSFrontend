@@ -432,9 +432,9 @@ function Modules() {
   }, [dispatch, modulesStatus, activeUser, programsStatus, foundModules, studentsStatus, foundStudents]);
     
 
-  if(modulesStatus === 'idle'){
-    return <Loader/>
-  }
+  // if(modulesStatus === 'idle'){
+  //   return <Loader/>
+  // }
   return (
     <div className='container'>{
             viewAddModule?

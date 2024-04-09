@@ -324,7 +324,7 @@ function Home() {
                 <p>Exams</p>
             </button>
 
-            <div className="cms-today-mobile-info-container">
+            <div style={{width:`${300* (todayModule?.length+3)}px`}} className="cms-today-mobile-info-container">
 
                 <div className="cms-today-hello-text cms-today-animate">
                     {isMorning && <h3>Good Morning ☀️</h3>}

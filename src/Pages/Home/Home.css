@@ -320,21 +320,26 @@
     }
 
     .class-important-tabs-container{
-        
+        position: relative;
         display: block;
         overflow-x: auto;
         /* display: none; */
+        background-color: black;
+        z-index: 1;
         
     }
 
     .cms-today-mobile-info-container{
+        bottom: 0;
+        right: 0;
+        position: absolute;
         display: flex;
-        width: 100%;
         align-items: center;
-        gap: 2em;
+        gap: 1em;
         height: 100%;
-        transform: translateX(100%);
-        animation: scrollMessage 20s linear infinite;
+        /* transform: translateX(100%); */
+        animation: scrollMessage 30s linear infinite;
+
     }
 
     .cms-today-animate{
