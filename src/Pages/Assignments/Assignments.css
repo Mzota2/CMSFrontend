@@ -1,4 +1,55 @@
 
+
+.cms-today-main-container{
+    background-color: white;
+    padding: 2em 1em;
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+}
+
+.cms-today-inner-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+ 
+}
+
+@media (max-width:450px) {
+    .cms-today-main-container{
+        padding: 1em;
+    }
+}
+
+
+
+/* today container */
+
+.cms-today-cls{
+    padding: 1em;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    background-color: var(--smooth-blue);
+    border: 1px solid rgba(0, 170, 255, 0.278);
+    width: 90%;
+    max-width: 500px;
+}
+.cms-today-classes-title{
+    align-self: center;
+    color: var(--light-blue);
+    margin-bottom: 1em;
+}
+
+.cms-today-active-icon{
+   margin-left: auto;
+}
+
+
 .cms-assign-cls{
     flex-direction: column !important;
     

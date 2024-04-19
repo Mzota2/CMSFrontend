@@ -103,6 +103,9 @@
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.35);
     padding: 2em;
     gap: 1em;
+    max-width: 300px;
+    height: 80vh;
+    overflow-y: auto;
 }
 
 .cms-group-container{
@@ -399,10 +402,8 @@
 
 /* Created groups */
 .cms-recently-created-groups-container{
-    display: grid;
-    grid-column: auto auto;
-    max-width: 100%;
-    border: none;
+    display: flex;
+    flex-direction: column;
 }
 .cms-created-groups-title{
     color: var(--light-blue);
@@ -410,20 +411,16 @@
 }
 
 .cms-created-groups-container{
-    z-index: 0;
-    background-color: white;
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.551);
     margin: auto !important;
     padding: 4em 2em;
     width: 100% !important;
     max-width: 1200px;
     box-shadow: 0px -2px 3px rgba(128, 128, 128, 0);
-    /* max-height: 600px !important;  */
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: flex;
     flex-direction: column;
-    gap: 1em;
     height: 130vh;
+    gap: 1.5em;
 
 }
 
@@ -445,7 +442,6 @@
     width: 100%;
     gap: 1em;
     overflow-x: auto;
-
 }
 
 .cms-created-appear-text{
@@ -486,6 +482,21 @@
     transition: .5s ease;
 }
 
+/* cms-group-selected */
+.cms-selected-module-groups-title-container{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    flex-wrap: wrap;
+
+}
+
+.cms-selected-module-group-title{
+    max-width: 100%;
+    padding:.5em .5em;
+    background-color: var(--feint-blue);
+
+}
 
 /* other */
 

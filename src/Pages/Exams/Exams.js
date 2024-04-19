@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./Exams.css";
 import axios from 'axios';
 import { appUrl } from '../../Helpers';
 import {Close, Brightness1, ArrowDropDown, ArrowDropUp, Add} from '@mui/icons-material';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import { useDispatch, useSelector } from 'react-redux';
+import { getModules } from '../../State/ModulesSlice';
+import { setActiveModules } from '../../State/StudentsSlice';
+import SubNav from '../../Components/SubNav/SubNav';
 
-function Exams({examModules, modules, handleClose}) {
+function Exams() {
+
+    const dispatch = useDispatch();
+      //modules
+    const foundModules = useSelector(state => state.modules.data);
+    const moduleStatus = useSelector(state => state.modules.status);
+    const [todayModule, setTodayModule] = useState();
+
+
+    //active user
+    const activeUser = useSelector(state => state.students.activeUser);
+    const [assignments, setAssignments] = useState();
+    const [exams, setExams] = useState();
+    const activeModules = useSelector(state => state.students.modules);
+    const [modules, setModules] = useState();
+      
+
     const [newExam, setNewExam] = useState({
         title:"",
         date:"",
@@ -72,16 +92,60 @@ function Exams({examModules, modules, handleClose}) {
 
     
     }
+
+    useEffect(()=>{
+        if(moduleStatus === 'idle'){
+            dispatch(getModules());
+        }
+
+
+        else if((moduleStatus !== 'idle') && activeUser){
+         
+            const days = ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const date = new Date();
+            const day = date.getDay();
+           
+            const foundToday = foundModules?.filter((module)=>{
+                const isToday = module?.classDays?.find(cls => cls?.day === days[day]);
+                if(isToday){
+                    console.log(isToday);
+                    return isToday;
+                }
+            });
+
+            const foundExams = foundModules?.filter((module)=>{
+                return module?.exams?.length;
+            })
+
+            const foundAssignments = foundModules?.filter((module)=>{
+                return module?.assignments?.length;
+            })
+
+
+         
+            setAssignments(foundAssignments);
+            setExams(foundExams);
+        }
+
+        if(activeModules){
+            setModules(activeModules);
+        }
+
+
+    }, [dispatch, moduleStatus, foundModules, activeModules])
   return (
-    <div className='cms-today-outer-container'>
+
+    <div>
+        <SubNav/>
+
+        <br />
+        <br />
+
+        <div className='cms-today-outer-container'>
 
         <div className='cms-today-inner-container'>
 
-            <div style={{zIndex:1}} onClick={handleClose} className="close-icon-container">
-                <Close className='close-icon' />
-            </div>
-
-         <div className={`${enlarge?"cms-enlarge-window":"cms-minimise-window"} cms-today-main-container`}>
+        <div className={`cms-today-main-container`}>
             
             <div className="cms-assign-tabs">
                 <h3 className='cms-assign-title'>Exams</h3>
@@ -119,14 +183,14 @@ function Exams({examModules, modules, handleClose}) {
                         <input value={newExam.time.to} onChange={handleChangeTime} name='to' type="time" className='cms-input-field cms-assign-field' />
 
                     </div>
-                  
+                
                     <input value={newExam.date}  onChange={handleChange} name="date" type="date" className='cms-input-field cms-assign-field' />
                         
                     <button onClick={createExam} className='cms-btn cms-create-assign-btn'>Create</button>
                 
                 </form>:
 
-                examModules?.map((md)=>{
+                exams?.map((md)=>{
 
                     return md?.exams?.map((exam, index)=>{
                         return(
@@ -138,22 +202,12 @@ function Exams({examModules, modules, handleClose}) {
                                     <p>{exam?.date}</p>
                                     <p>{exam?.time?.from}- {exam?.time?.to}</p>
                                     
-
-                                    {
-                                    toggleDescription?<ArrowDropUp onClick={handleToggleDescription} className='cms-assign-drop-icon'/>:<ArrowDropDown onClick={handleToggleDescription}  className='cms-assign-drop-icon'/>
-                                    }
                                     <Brightness1 className='cms-class-on-icon cms-today-active-icon'/>
 
 
                                 </div>
 
-                                {
-                                    toggleDescription?
-                                    <div  className='cms-assignment-description-container'>
-                                        <p>{exam?.description}</p>    
-                                    </div>
-                                    :<></>
-                                }
+                             
                                 
                             </div>
                         )
@@ -163,18 +217,13 @@ function Exams({examModules, modules, handleClose}) {
                 })
             }
 
-                <div onClick={handleEnlarge} className="cms-notice-expand-icon cms-today-exapand-icon">
+        </div>
 
-                    {
-                    enlarge?<CloseFullscreenIcon className='cms-expand-icon' />:
-                    <OpenInFullIcon className='cms-expand-icon' />
-                    }
-
-                </div>
+        </div>
         </div>
 
     </div>
-    </div>
+  
   )
 }
 

@@ -102,8 +102,6 @@ async function verifyPWD(user){
       return passwordMatch
       
     });
-
-  
    
     if(foundUser){
       setUser(foundUser);

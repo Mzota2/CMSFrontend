@@ -194,17 +194,17 @@ function Classes() {
             const isOn = mod?.classDays?.find((dy)=> dy.isCancelled === false);
 
             return(
-              <div className='class-module class-timetable' key={mod?._id} >
+              <div className='cms-class-module cms-home-today' key={mod?._id} >
 
-                  <h3>{mod?.name}</h3> <span className='vertical-space'>|</span>
-                  <p>{mod?.code}</p><span className='vertical-space'>|</span>
-                  <p className='class-module-lecturer'><strong>{mod?.lecturer}</strong></p>
+                      <p className='cms-today-name'>{mod?.name}</p>
+                      <p className='cms-today-code'>{mod?.code}</p>
+                      <p className='cms-today-lecturer'>{mod?.lecturer}</p>
                  
                  <div className="cms-module-status-container">
                   {isDay && isOn?
                   <i className="fas fa-toggle-on m-status m-status-on" onClick={()=>{setClassOnOff(mod?._id, false)}} ></i>:
-                   isDay &&
-                  <i className="fas fa-toggle-off m-status  m-status-off" onClick={()=>{setClassOnOff(mod?._id, true)}}></i>
+                   isDay && !isOn?
+                  <i className="fas fa-toggle-off m-status  m-status-off" onClick={()=>{setClassOnOff(mod?._id, true)}}></i>:<></>
                   
                 }
                   

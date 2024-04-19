@@ -2,28 +2,26 @@ import React, { useEffect, useState } from 'react'
 import image1 from '../../Assets/image1.jpg';
 import image2 from '../../Assets/image2.jpg';
 import image3 from '../../Assets/image3.jpg';
-import announcementLottie from'../../Lotties/announcement.json';
-import { Link } from 'react-router-dom';
 
 import './Home.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModules } from '../../State/StudentsSlice';
-import Lottie from 'react-lottie'
-import Exams from '../../Components/Exams/Exams';
-import Assignments from '../../Components/Assignments/Assignments';
-import Today from '../../Components/Today/Today';
 import { getModules } from '../../State/ModulesSlice';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import SplitscreenIcon from '@mui/icons-material/Splitscreen';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import { current } from '@reduxjs/toolkit';
-import Account from '../../Components/Account/Account';
-import {ExpandLess, ExpandMore, Brightness1} from '@mui/icons-material'
 import Loader from '../../Components/Loader/Loader';
 import {useNavigate} from 'react-router-dom';
 import {getAnnouncements} from '../../State/AnnouncementsSlice';
+import robotImage from '../../Assets/robot.jpg';
+import engineeringGirl from '../../Assets/engineeringGirls.jpg';
+
+import {Engineering, ExpandMore, ExpandLess, Check, Clear, Visibility} from '@mui/icons-material'
 
 function Home() {
+
+    //HIDE AND SHOW SECTIONS
+
+    const [showProjects, setShowProjects] = useState(true);
+    const [showEvents, setShowEvents] = useState(true);
+    const [showToday, setShowToday] = useState(true);
 
     const navigate = useNavigate();
     //
@@ -32,6 +30,7 @@ function Home() {
     //date and time
     const days = ['Sunday,Monday, Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const date = new Date();
+    const [ today, setToday]= useState();
     const isMorning = date.getHours() < 12?true:false
     const isAfternoon = date.getHours() > 12 && date.getHours()< 18? true:false;
     const isEvening = date.getHours() > 18? true:false;
@@ -39,25 +38,14 @@ function Home() {
     
     //floating action bt
    
-    const [isExpand, setIsExpand] = useState(false);
-
-    
-    console.log(date.getDay());
-
-
-
-    //display assignments, exams, today
-    const [showToday, setShowToday] = React.useState(false);
-    const [showAssignments, setShowAssignments] = React.useState(false);
-    const [showExams, setShowExams] = React.useState(false);
-
-    //animations - options
-   
-
     //modules
     const foundModules = useSelector(state => state.modules.data);
     const moduleStatus = useSelector(state => state.modules.status);
     const [todayModule, setTodayModule] = useState();
+    const [activeModule, setActiveModule] = useState();
+    const [displayActiveModule, setDisplayActiveModule] = useState(false);
+
+
     const [assignments, setAssignments] = useState();
     const [exams, setExams] = useState();
 
@@ -66,68 +54,56 @@ function Home() {
 
     const [modules, setModules] = useState();
     const imagePaths = [image1, image2, image3];
-
-    //set active
  
-    const classNotice = ['Department T-shirts', 'Department Class Party', 'Department Trip', 'More', 'Lets see'];
-    const [activeClassNotices, setActiveClassNotices] = useState(classNotice.slice(0, 3));
-
     //active user
     const activeUser = useSelector(state => state.students.activeUser);
 
+    //announcements
+    const foundAnnouncements = useSelector(state => state.announcements.data);
+    const announcementsStatus = useSelector(state => state.announcements.status);
+    const [announcements, setAnnouncements] = useState([]);
 
-      //announcements
-      const foundAnnouncements = useSelector(state => state.announcements.data);
-      const announcementsStatus = useSelector(state => state.announcements.status);
-      const [announcements, setAnnouncements] = useState([]);
 
-
-    //expand floating action button
-    function handleExpand(){
-      setIsExpand(prev => !prev);  
-    }
-
-   
-     //handle show assignments, exams and today
-
+    //collapse section
     
-     function handleShowExams(){
-        setShowAssignments(false);
-        setShowExams(prev => !prev);
-        setShowToday(false);
+    function handleDisplayProjects(){
+      setShowProjects(prev => !prev);
     }
 
-    function handleShowAssignments(){
-        setShowAssignments(prev => !prev);
-        setShowExams(false);
-        setShowToday(false);
+    function handleDisplayEvents(){
+      setShowEvents(prev => !prev);
     }
 
-    function handleShowToday(){
-        setShowToday(prev => !prev);
-        setShowAssignments(false);
-        setShowExams(false);
+    function handleDisplayToday(){
+      setShowToday(prev => !prev);
     }
 
 
-    //animate change of background image
-    const defaultOptions = {
-        loop: true,
-        autoplay: true,
-        animationData: announcementLottie,
-        rendererSettings: {
-          preserveAspectRatio: "xMidYMid slice"
+    //handle view animation background image
+    const [homeAnimeIndex, setHomeAnimeIndex] = useState(1);
+
+    //function set interval
+
+    function handleAnimation(){
+      setTimeout(()=>{
+        if(homeAnimeIndex <2){
+          setHomeAnimeIndex(prev => prev+1);
         }
-      };
-      //function set interval
+        else{
+          setHomeAnimeIndex(0);
+        }
+        
+      }, 60000)
+    }
+
+    function handleSelectModule(id){
+      console.log('clicked');
+      setDisplayActiveModule(prev => !prev);
+      const selectedModule = modules?.find((md)=> md?._id === id);
+      setActiveModule(selectedModule);
+    }
 
     React.useEffect(()=>{
-        // const user =JSON.parse(localStorage.getItem('cms-user'));
-       
-        // if(user){
-        //     dispatch(setActive(user));
-        // }
-       //set the first three
 
         if(moduleStatus === 'idle'){
             setIsLoading(true)
@@ -196,12 +172,17 @@ function Home() {
 
         }
 
-        // setInterval(runAnimations, 10000);
-        // runAnimations();
+        setToday(days[date.getDay()]);
 
-    }, [index, dispatch, moduleStatus, foundModules, announcementsStatus, foundAnnouncements]);
+       
+
+    }, [index, dispatch,moduleStatus, foundModules, announcementsStatus, foundAnnouncements]);
 
 
+    useEffect(()=>{
+      console.log(homeAnimeIndex);
+      handleAnimation();
+    }, [homeAnimeIndex])
 
     if(isLoading){
         return <Loader/>
@@ -209,172 +190,242 @@ function Home() {
 
   return (
     <div className=''>
+
         <div className="home-image-container">
 
-            <div className="cms-notice-board">
-                <div className="class-notice-top-container">
-                    <h2 className='class-announcement'>ANNOUNCEMENTS</h2>
-                    <Lottie
-                            options={defaultOptions}
-                            height={70}
-                            width={70}
-                            
-                        >
-                    </Lottie>
-                </div>
-                
-                <div className="cms-notice-board-container">
-
-                    <div className="cms-notice-animation-track">
-
-                    {announcements?.map((notice, index)=>{
-                        //console.log(randomAnimation);
-        
-                            return(
-                                <div onClick={()=>{navigate('/announcements')}} style={{animationDelay:`${(index+1)*100}ms`}} key={index} className={`cms-notice-container`}>
-                                    <h1 className="cms-notice-title">{notice?.agenda}</h1>
-                                    
-                                    <div className="cms-notice-date-time">
-                                        <p className='cms-notice-time'>{notice?.time}</p>
-                
-                                        <p className='cms-notice-day'>{notice?.date}</p>
-                                    </div>
-                                    
-                                </div>
-                            )
-
-                       
-                    })}
-
-                    </div>
-                   
-
-                    
-                    <div onClick={()=>{navigate('/announcements')}} className="cms-notice-expand-icon">
-                        <OpenInFullIcon className='cms-expand-icon' />
-                    </div>
-
-                </div>
-                
+          <div style={{display:`${homeAnimeIndex === 0? 'flex':'none'}`}} className="cms-home-message-container">
             
+            <div className="cms-home-message-image-container">
+              <img className='home-image' src={image1} alt="back" />
             </div>
 
-            <img className='home-image' src={imagePaths[index]} alt="class" />
-            
+            <div className="cms-home-text-container">
+              <div className="cms-engineering-mindset">
+                <h1 className='cms-home-message'>THE ENGINEERING MINDSET</h1>
 
-            <div className="home-background-overlay">
-                
-        </div>
-
-            {showExams? <Exams modules={modules} handleClose={handleShowExams} examModules ={exams}/> :<></>}
-
-            {showAssignments? <Assignments modules={modules} handleClose={handleShowAssignments} assignmentModules ={assignments}/>: <></>}
-
-            {showToday? <Today todayModules ={todayModule} handleClose={handleShowToday}/> :<></>}
-
-        
-          
-
-            <div className="cms-important-floating-buttons">
-
-               <div onClick={handleShowExams} className={`${isExpand? 'aslideUp':'aslideDown'} cms-view-exams-floating-btn cms-mobile-floating-action-btn`}>
-                    <EditNoteIcon className='cms-important-icon' />
+                <div className="cms-home-engineering-icon-container">
+                  <Engineering className='cms-home-engineering-icon' />
                 </div>
-
-            
-
-            <div onClick={handleShowAssignments} className={`${isExpand? 'aslideUp':'aslideDown'} cms-view-assign-floating-btn cms-mobile-floating-action-btn`}>
-                    <EditNoteIcon className='cms-important-icon' />
-                </div>
-            
-
-            <div onClick={handleExpand} className="cms-mobile-floating-action-btn">
-                {
-                    isExpand?<ExpandMore className='cms-expand-icon' />: <ExpandLess className='cms-expand-icon'/>
-                }
-            </div>
-
-            </div>
-
-          
-        
-        <div className="class-important-tabs-container">
-            
-            
-            <button onClick={handleShowToday} className="class-today-tab cms-tab">
-                <div className="cms-important-icon-container">
-                    <SplitscreenIcon className='cms-important-icon' />
-                </div>
-                <p>Today</p>
                
-            </button>
-            
-            
-            <button onClick={handleShowAssignments} className="class-assignments-tab cms-tab">
-                <div className="cms-important-icon-container">
-                    <EditNoteIcon className='cms-important-icon' />
-                </div>
-                <p>Assignments</p>
-            </button>
+      
+              </div>
+              
+              <p className='cms-home-message-quote'>“I have not failed, but found 1000 ways to not make a light bulb.”</p>
+              <p className='cms-home-message-author'>Thomas Edison</p>
+            </div>
+        
+          </div>
 
-            <button onClick={handleShowExams} className="class-exams-tab cms-tab">
-                <div className="cms-important-icon-container">
-                    <EditNoteIcon className='cms-important-icon' />
-                </div>
-                <p>Exams</p>
-            </button>
-
-            <div style={{width:`${300* (todayModule?.length+3)}px`}} className="cms-today-mobile-info-container">
-
-                <div className="cms-today-hello-text cms-today-animate">
-                    {isMorning && <h3>Good Morning ☀️</h3>}
-                    {isAfternoon && <h3>Good Afternoon 🕒</h3>}
-                    {isEvening && <h3>Good Evening 🌄</h3> }
-                </div>
-
-                <div className="cms-today-title cms-today-animate">
-                   { !isWeekend && <h3>Todays' Modules</h3>}
-                </div>
-
-                {!isWeekend?todayModule?.map((today)=>{
-                    return(
-                        <div key={today?._id} className="cms-today-cls cms-today-animate cms-today-cls-mobile">
-                            
-                            <p>{today?.code}</p>
-                            <p>{today?.lecturer}</p>
-    
-                        </div>
-                    )
-                }):<></>}
-
-
-                {isWeekend &&  <h3 className='cms-today-title cms-today-animate'>Have a great weekend ✝️ ☪️</h3>}
-
+          <div style={{display:`${homeAnimeIndex === 1? 'flex':'none'}`}}  className="cms-home-message-container">
+            <div className="cms-home-message-image-container">
+              <img className='home-image' src={image2} alt="back" />
             </div>
 
-           
+            <div className="cms-home-text-container">
+              <div className="cms-engineering-mindset">
+                <h1 className='cms-home-message'>THE INNOVATIVE MINDSET</h1>
+                <div className="cms-home-engineering-icon-container">
+                  <Engineering className='cms-home-engineering-icon' />
+                </div>
+      
+              </div>
+              
+              <p className='cms-home-message-quote'>“If at first the idea is not absurd, then there is no hope for it.“</p>
+              <p className='cms-home-message-author'>Albert Einstein</p>
+            </div>
+        
+          </div>
 
+          <div style={{display:`${homeAnimeIndex === 2? 'flex':'none'}`}}  className="cms-home-message-container">
+            <div className="cms-home-message-image-container">
+              <img className='home-image' src={image3} alt="back" />
+            </div>
 
-        </div>       
+            <div className="cms-home-text-container">
+              <div className="cms-engineering-mindset">
+                <h1 className='cms-home-message'>HUMANITARIAN IMPACT</h1>
+                <div className="cms-home-engineering-icon-container">
+                  <Engineering className='cms-home-engineering-icon' />
+                </div>
+      
+              </div>
+              
+              <p className='cms-home-message-quote'>“Life’s most persistent and urgent question is, ‘What are you doing for others?’”</p>
+              <p className='cms-home-message-author'> Martin Luther King Jr</p>
+            </div>
+        
+          </div>
 
+          <div className="home-background-overlay"> </div>
 
         </div>
 
-        {/* <div className="footer-container">
-            <div className="footer-text-container">
-            <Link to={'/'} className="logo-container">
-                <h1 className='logo-title'>CMS</h1>
-                <p><strong>Electrical Department D2</strong></p>
-                <p>BECE, BEEE, BETE & BBME</p>
+        <div className="cms-home-welcome-engineer">
+          <Engineering className='cms-home-engineering-icon' />
+          <h2 className='cms-home-engineer-text'>Computer Engineer</h2>
+        </div>
 
-            </Link>
-            <br />
-                <hr className="footer-line" />
-                <br />
-                <p className='copyright'>© 2024 CMS Electrical Department D2</p>
-                <br />
+        <div className="cms-home-todays-classes-container cms-home-section">
+
+          <div className="cms-home-section-button">
+            
+            <h3 className='cms-home-section-title'>Today's Classes</h3>
+
+            <div onClick={handleDisplayToday} className="cms-home-expand-container">
+             { !showToday? <ExpandMore className='cms-home-expand-icon'/>:<ExpandLess className='cms-home-expand-icon'/>}
             </div>
-        </div> */}
+
+          </div>
+
+         { showToday &&<div className="cms-home-todays-classes">
+            {
+              todayModule?.map((md)=>{
+
+                console.log(md);
+
+                const isActive = !md?.isCancelled;
+                return(
+                  <div key={md?._id} className="cms-home-today" onClick={()=>{handleSelectModule(md?._id)}}>
+
+                    <div className="cms-home-today-details">
+                      <p className='cms-today-name'>{md?.name}</p>
+                      <p className='cms-today-code'>{md?.code}</p>
+                      <p className='cms-today-lecturer'>{md?.lecturer}</p>
+
+                      <div style={{backgroundColor:`${isActive?'green':'red'}`}} className="cms-today-isActive">
+                          {isActive ? <Check/>:<Clear/>}
+                      </div>
+                    </div>
+
+                    {displayActiveModule && md?._id === activeModule?._id &&
+
+                    <div className="cms-home-today-more-info">
+                    {
+                 
+                
+                      
+                        activeModule?.classDays?.map((dy, idx)=>{
+                          return(
+                          <div key={idx} className="cms-module-dy cms-module-dy-home">
+                              <div className="cms-module-dy-info">
+                              <p>{dy?.from}</p>
+                              <span>-</span>
+                              <p>{dy?.to}</p>
+                              <p>{dy?.day}</p>
+                              <p>{dy?.room}</p>
+                            </div>
+                            <hr className='hr-line'/>
+
+                          </div>)
+                        })
+                      }
+             
+                
+                    </div>
+              }
+                  </div>
+                )
+              })
+            }
+          </div>}
+
+       
+
+        </div>
+
+       <div className="cms-home-projects-innovations-container cms-home-section">
+
+          <div className="cms-home-section-button">
+              
+              <h3 className='cms-home-section-title'>Projects & Innovations</h3>
+
+              <div onClick={handleDisplayProjects} className="cms-home-expand-container">
+                {!showProjects?<ExpandMore className='cms-home-expand-icon'/>:<ExpandLess className='cms-home-expand-icon'/>}
+              </div>
+
+          </div>
+
+
+          {showProjects && <div className="cms-projects-innovations">
+            {
+              [1,2,3, 4,5,6].map((project)=>{
+                return(
+                  <div className="cms-home-project">
+
+                    <div className="cms-project-image-container">
+                      <img src={robotImage} className='cms-project-image' alt="robot" />
+                    </div>
+
+                    <div className="cms-project-details">
+                      <h4 className="cms-project-title">
+                        MUBAS Engineering Students Inver a Robot
+                      </h4>
+
+                      <p>According to our sources the robot...</p>
+
+
+                    </div>
+
+                    <button className='cms-btn cms-projects-btn'>Read more</button>
+
+                  </div>
+                )
+              })
+            }
+          </div>}
+        </div>
+        
+        
+       <div className="cms-home-events-activities-container cms-home-section">
+            <div className="cms-home-section-button">
+                
+                <h3 className='cms-home-section-title'>Events & Activities</h3>
+
+                <div onClick={handleDisplayEvents} className="cms-home-expand-container">
+                  {!showEvents?<ExpandMore className='cms-home-expand-icon'/>:<ExpandLess className='cms-home-expand-icon'/>}
+                </div>
+
+            </div>
+        {
+            showEvents && <div className="cms-projects-innovations">
+          {
+            [1,2,3,4,5,6].map((project)=>{
+              return(
+                <div className="cms-home-project">
+
+                  <div className="cms-project-image-container">
+                    <img src={engineeringGirl} className='cms-project-image' alt="robot" />
+                  </div>
+
+                  <div className="cms-project-details">
+                    <h4 className="cms-project-title">
+                      WomEng workshop shines spot light on leadership skills among female engineers
+                    </h4>
+
+                    <p>According to our sources the robot...</p>
+
+
+                  </div>
+
+                  <button className='cms-btn cms-projects-btn'>Read more</button>
+
+                </div>
+              )
+            })
+          }
+          </div>
+        }
+        </div>
+        <br />
+        <br />
+
+        <hr className='footer-line'/>
+
+        <div className="cms-footer">
+         
+
+          <p className='copyright'>© Electrical Department CMS 2024</p>
+        </div>
 
 
 

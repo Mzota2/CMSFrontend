@@ -1,16 +1,14 @@
 import React,{useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import { getStudents, setActive, setActiveModules } from '../../State/StudentsSlice';
+import { getStudents, setActiveModules } from '../../State/StudentsSlice';
 import { getGroups } from '../../State/GroupsSlice';
 import axios from 'axios'
 
 import './Groups.css';
 import { appUrl } from '../../Helpers';
 import { getModules } from '../../State/ModulesSlice';
-import SubNav from '../../Components/SubNav/SubNav';
 import groupsImage from '../../Assets/groups.jpg';
-import {animated, } from '@react-spring/web'
-import {Parallax, ParallaxLayer, IParallax} from '@react-spring/parallax'
+import {Parallax, ParallaxLayer} from '@react-spring/parallax'
 import { Link } from 'react-router-dom';
 import {Close, ArrowBack, ArrowForward} from '@mui/icons-material';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
@@ -25,7 +23,8 @@ function Groups() {
     const [pending, setPending]= useState(false);
 
     const [assignPage, setAssignPage] = useState({
-      index:0,
+      assignIndex:0,
+      moduleIndex:0,
       page:1
     })
       const [groupsPage, setGroupsPage] = useState({
@@ -34,14 +33,15 @@ function Groups() {
         page:1
     })
 
+        //Updates the value of selected module for groups
+    const [groupModule, setGroupModule] = useState([]);
+
 
     //parallax
     const parallax = useRef(null);
 
     // students state
-    const [studentsText, setStudentsText] = React.useState('');
     const [generateClicked, setGenerateClicked] = React.useState(false);
-    const [randomisationArray, setRandomisationArray] = React.useState();
     const [groupNumber, setGroupNumber] = React.useState(3);
     const [taskTitle, setTaskTitle] = React.useState('');
     const [showReps, setShowReps] = React.useState(false);
@@ -72,7 +72,38 @@ function Groups() {
     const foundGroups = useSelector(state => state.groups.data);
     const groupsStatus = useSelector(state => state.groups.status);
     const dispatch = useDispatch();
-    const [apiGroups, setApiGroups] = React.useState();
+    const [apiGroups, setApiGroups] = React.useState([]);
+
+    function handleChangeGroupModule(e){
+      const selectedModule = foundModules?.find((md)=> md?._id === e.target.value);
+    
+      if(selectedModule){
+        const index = foundModules?.indexOf(selectedModule);
+        setGroupModule(prev =>{
+          return [selectedModule];
+        });
+
+        setAssignPage(prev =>{
+          return{
+            ...prev,
+            moduleIndex:index
+          }
+        })
+      }
+
+      console.log(selectedModule);
+      
+    }
+
+    //handles task selection
+    function handleSelectTask(i){
+      setAssignPage(prev =>{
+        return {
+          ...prev,
+          assignIndex:i
+        }
+      })
+    }
 
     //handles selected module
 
@@ -89,36 +120,8 @@ function Groups() {
       setTaskTitle(prev => e.target.value)
     }
 
-    function handleChangeInput(e){
-      setStudentsText(e.target.value);
-    }
-
-    function createArray(){
-      console.log(studentsText)
-      if(studentsText){
-          const arr = studentsText.split(',');
-          
-          if(arr.length > 2){
-            setRandomisationArray(arr);
-            setGenerateClicked(true);
-            console.log(arr);
-          }
-      }
-      else{
-        console.log('no text')
-      }
-    }
-
     function toggleGenerate(){
       setGenerateClicked(prev => !prev)
-    } 
-
-    function filterGroups(id){
-      const foundModule = modules?.filter((md)=>{
-        return md?._id === id;
-      });
-
-      setApiGroups(foundModule);
     }
   
     async function confirmGroups(){
@@ -202,6 +205,8 @@ function Groups() {
        //numver of groups = collection.length/number
        //members num = students;
 
+      
+
        
       setPending(true);
 
@@ -210,9 +215,10 @@ function Groups() {
         if(collection?.length > 3){
           let groupCount = 0;
           const groups = [];
+          //truncate the value
           const groupNumber = Math.trunc((collection.length / students)) ;
           
-          console.log(groupNumber)
+         
           const remainder = collection.length % students;
           let newCollection = collection.slice(0, collection.length - remainder);
           const additional = collection.slice(collection.length - remainder);
@@ -221,6 +227,7 @@ function Groups() {
           //what to do
           //add them randomly to the groups
           //adding the remaining groups using another loop
+     
       
           while(groupCount < groupNumber){
             
@@ -235,27 +242,29 @@ function Groups() {
               }
               
             }
-      
+
             groups.push(group);
             groupCount = groupCount + 1;
            
           }
          
           
-          if(groupCount >= groupNumber && remainder){
+          if((moduleStudents?.length/students) >= 2){
     
             if(additional.length >= students -1 ){
               groups.push(additional);
+            
             }
             else{
               var groupLength = groups.flat().length;
-              console.log(groups.flat());
-      
+        
+           
+              
               while(groupLength < collection.length){
     
                 let groupIndex = generateRandom(groups);
                 let additionalIndex = generateRandom(additional);
-                const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
+                const foundAdditional = groups?.find((group)=> group.includes(additional[additionalIndex]) );
                 console.log(foundAdditional);
                 if(groups[groupIndex].length < students + 1){
                   if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
@@ -267,11 +276,17 @@ function Groups() {
                 
             
                 groupLength = groups.flat().length;
-              
+                console.log(groupLength);
+
               }
+
+
+
             }
+          
   
             console.log(groups);
+
   
             
             const finalG = [...addRep(groups, groupReps)];
@@ -283,7 +298,8 @@ function Groups() {
             
          }
          else{
-          window.alert('You have inadequate number of students to form groups')
+          window.alert('You have inadequate number of students to form groups');
+          return [];
          }
 
          setPending(false);
@@ -333,7 +349,7 @@ function Groups() {
            
           }
      
-         if(groupCount === number && remainder){
+         if((moduleStudents?.length / number) >= 2){
            var groupLength = groups.flat().length;
            console.log(groups.flat());
            let additionalCount = 0;
@@ -401,7 +417,6 @@ function Groups() {
   function handlePagerBackward(){
     
       if(groupsPage.endIndex>6){
-        console.log("clicked backward")
         setGroupsPage(prev =>{
               
             return{
@@ -416,8 +431,7 @@ function Groups() {
 
   function handlePagerForward(){
     //
-    console.log(apiGroups);
-      const groupsNum =  apiGroups[assignPage.index].groups?.length;
+      const groupsNum =  apiGroups[assignPage.index]?.assignments?.length;
       console.log(groupsNum);
       
       if(groupsPage.endIndex < groupsNum){
@@ -537,21 +551,6 @@ function Groups() {
   return (
     
       <div>
-
-       
-          {/* <div className='group-creator-container'>
-                  <h2 className='group-creator-title'>Quick Group Creator</h2>
-                  <p>Enter student names separated by comma</p>
-                  <br />
-
-                  <textarea value={studentsText} onChange={handleChangeInput} className='group-student-field' name="studentnames" id="" cols="30" rows="10"></textarea>
-                  
-                  <br />
-                
-
-          </div> */}
-          
-          {/* <SubNav/> */}
 
           <Parallax ref={parallax} pages={3}>
 
@@ -712,35 +711,51 @@ function Groups() {
                     <h2 className='cms-created-groups-title'>RECENTLY CREATED GROUPS</h2>
                     <br />
 
-                    <div className="cms-assign-groups-module-filter">
+                    <select onChange={handleChangeGroupModule} name="modules" id="modules" className='cms-field cms-add-student-field'>
+                    {
+                      modules?.map((md, index)=>{
+                        return(
+                          <option key={index}  value={md?._id} >
+                            {md?.code}
+                          </option>
+                        )
+                      })
+                    }
+
+                    </select>
+
+                    <div className="cms-selected-module-groups-title-container">
                       {
-                        modules?.map((md, index)=>{
-                          return(
-                            <div onClick={()=>handleModuleGroups(md?._id)} className="cms-group-module-f">
-                              <p className='cms-group-module-filter-title'>{md?.code}</p>
-
-                              <div className="cms-group-module-title-container">
-
-                              </div>
-                            </div>
-                          )
+                        apiGroups[assignPage?.moduleIndex]?.assignments?.map((assign, index)=>{
+                          
+                          
+                            if(assign?.type === 'group' && assign?.task){
+                              return (
+                                <div key={index}  className="cms-selected-module-group-title">
+                                     <p className="cms-selected-module-group-title" onClick={()=>{handleSelectTask(index)}}>
+                                      {assign?.task?.substring(0, 16)+'...'}
+                                    </p>
+                                </div>
+                               
+                              )
+                            }
+                        
                         })
                       }
-                     
-
                     </div>
-
 
                     <div className="cms-recently-created-groups-container">
                       <br />
-                        {apiGroups?.length? apiGroups[0]?.assignments?.map((groups, index)=>{
-                          console.log(groups?.groups);
-                          return(
+                        {apiGroups?.length? [apiGroups[assignPage?.moduleIndex]?.assignments[assignPage?.assignIndex]].map((groups, index)=>{
+                          
+                          if(groups?.type === 'group'){
+
+                            return(
                             <div className='cms-created-assignment' key={index} >
                               <h3 className='cms-task-title'>{groups?.task}</h3>
 
                               <div className='cms-created-assignment-groups'>
-                              {groups?.groups?.map((group, index)=>{
+                              {groups?.groups.map((group, index)=>{
                                 
                                 if(index >= groupsPage.startIndex && index <groupsPage.endIndex){
                                     
@@ -785,9 +800,14 @@ function Groups() {
                                     
                             </div>
                           )
+                          }
+                          
                         }):<></>}
                     </div>
 
+              
+              
+        
               </div>
             </ParallaxLayer> 
 

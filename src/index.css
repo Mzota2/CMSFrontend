@@ -10,10 +10,12 @@ body{
   font-family: 'Lato', sans-serif;
 }
 
+
 :root{
   --blue-color:#2c275c;
-  --light-blue:#21a7e0;
+  --light-blue:#64C0D5;
   --smooth-blue:rgb(250, 252, 255);
   --dark-blue:#107dac;
+  --feint-blue:#F0F5F6;
 }
 

@@ -1,10 +1,10 @@
-import React , {useState}from 'react'
+import React , {useRef, useState}from 'react'
 import {Link} from 'react-router-dom';
 import './NavBar.css';
 import {AccountCircle, EditNote} from '@mui/icons-material'
 import { useSelector } from 'react-redux';
 import Account from '../Account/Account';
-import {Close, Menu, GroupWork, LocalLibrary, Home, People, Abc, School} from '@mui/icons-material';
+import {Close, Menu, GroupWork, LocalLibrary, Home, People, Abc, School, AddCircle, Notifications} from '@mui/icons-material';
 
 import {useNavigate} from 'react-router-dom';
 
@@ -13,6 +13,8 @@ function NavBar() {
     const activeUser = useSelector(state => state.students.activeUser);
 
     const [activeNav, setActiveNav] = useState('Home');
+
+   
     
     const [showMenu, setShowMenu] = React.useState(false);
 
@@ -37,7 +39,8 @@ function NavBar() {
     
   return (
     <header>
-        <Account show={showAccount} student={activeUser} handleClose={handleShowAccount}/>
+
+        <Account handleShowAccount={handleShowAccount} show={showAccount} student={activeUser} handleClose={handleShowAccount}/>
         
         
         <nav className='desktop-nav'>
@@ -90,93 +93,61 @@ function NavBar() {
 
         <div className="mobile-cms-nav">
 
-            <div className="mobile-nav-inner">
-                <Menu onClick={handleToggleMenu} className='menu-icon'/>
+            <div className="cms-mobile-nav-top-container">
+                <Link to={'/'} className="logo-container">
+                        <p>CMS Electrical Department D2</p>
+                </Link>
+
+                <AddCircle className='cms-add-program-icon' />
+
+                <div onClick={()=>{navigate('/announcements')}} className="cms-home-notification-container">
+                    <Notifications className='cms-notification-icon'/>
+                    <div className="cms-notifications-count">
+                        1
+                    </div>
+                </div>
+
             </div>
 
-            <Link to={'/'} className="logo-container">
-                    <h1 className='logo-title'>CMS</h1>
-                    <p>Electrical Department D2</p>
-            </Link>
+
+            <div className="cms-mobile-nav-bottom-container">
+                <div onClick={()=>{navigate('/')}}className="nav-option-container">
+                    <Home className={`nav-option-icon`} />
+                </div>
+                
+                <div onClick={()=>{navigate('/classes')}} className="nav-option-container">
+                    <School className={`nav-option-icon`} /> 
+                </div>
+                
+                <div className="nav-option-container">
+                    <People className={`'active-nav-icon'} nav-option-icon`} />
+                </div>
+            
+                <div onClick={()=>{navigate('/modules')}} className="nav-option-container">
+                    <Abc className={`nav-option-icon`} />
+                </div>
+
+                <div onClick={()=>{navigate('/students')}} className="nav-option-container">
+                    <LocalLibrary className={`nav-option-icon`} />
+                </div>
+
+                <div onClick={()=>{navigate('/groups')}} className="nav-option-container">
+                    <GroupWork className={`nav-option-icon`} />
+                </div>
+
+                
+
+                <div  onClick={handleShowAccount} className="profile-menu-icon-container">
+                    {showAccount?<Close className='cms-menu-icon'/>:<Menu className='cms-menu-icon'/>}
+                    
+                </div>
+
+                
+
+            </div>
 
              {/* <Link className='nav-user' to={'/'}>{activeUserName}</Link> */}
-             <div  onClick={handleShowAccount} className="profile-container">
-                    <AccountCircle className='profile-icon'/>
-                </div>
-
-            
-
-            <div style={{animationName:`${showMenu? 'slideIn': 'slideOut'}`}} className={`mobile-menu `}>
-                
-                <div onClick={handleToggleMenu} className="cms-mobile-menu-close-icon-container">
-                    <Close className='close-icon' />
-                </div>
-
-           
-
-                <ul className="nav-options-container">
-
-                    <div onClick={()=>{navigate('/')}}className="nav-option-container">
-                        <Home className={`nav-option-icon`} />
-                        
-                    </div>
-                    
-                    <div onClick={()=>{navigate('/classes')}} className="nav-option-container">
-                        <School className={`nav-option-icon`} />
-                        
-                    </div>
-                    
-                    <div className="nav-option-container">
-                        <People className={`'active-nav-icon'} nav-option-icon`} />
-                        
-                    </div>
-                
-                    <div onClick={()=>{navigate('/modules')}} className="nav-option-container">
-                        <Abc className={`nav-option-icon`} />
-                        
-                    </div>
-
-
-                </ul>
-
-                
-                <hr className='hr' style={{width:"100%"}} />
-                
-
-                <ul className="nav-options-container">
-                    <div onClick={()=>{navigate('/groups')}} className="nav-option-container">
-                        <GroupWork  className={`${activeNav === 'Modules' && 'active-nav-icon'} group-icon nav-option-icon`} />
-                        
-                    </div>
-
-                    <div onClick={()=>{navigate('/students')}} className="nav-option-container">
-                        <LocalLibrary  className={`${activeNav === 'Students' && 'active-nav-icon'} students-icon nav-option-icon`} />
-                    </div>
-
-                    {/* <div onClick={()=>{handleActiveTab()}} className="nav-option-container">
-                        <GroupWork  className={`${activeNav === 'Modules' && 'active-nav-icon'} group-icon nav-option-icon`} />
-                        <p className='nav-option' >Today</p>
-                    </div>
-
-                    <div onClick={handleActiveTab} className="nav-option-container">
-                        <EditNote  className={`${activeNav === 'Students' && 'active-nav-icon'} students-icon nav-option-icon`} />
-                        <p className='nav-option' >Assignments</p>
-                    </div>
-
-                    <div onClick={handleActiveTab} className="nav-option-container">
-                        <EditNote  className={`${activeNav === 'Students' && 'active-nav-icon'} students-icon nav-option-icon`} />
-                        <p className='nav-option'>Exams</p>
-
-                    </div> */}
-
-                   
-                    
-                    
-            
-                </ul>
-            </div>
-
-            
+             
         </div>
 
     </header>

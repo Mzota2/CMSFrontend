@@ -34,20 +34,20 @@ function Modules() {
     from:'',
     to:'',
     room:'',
-    day:'',
+    day:'Monday',
     isCancelled:false
   },{
     from:'',
     to:'',
     room:'',
-    day:'',
+    day:'Monday',
     isCancelled:false
   },{
     from:'',
     to:'',
     time:'',
     room:'',
-    day:'',
+    day:'Monday',
     isCancelled:false
   }]);
   const [daysNum, setDaysNum] = React.useState(1);
@@ -170,7 +170,7 @@ function Modules() {
 
       const {data} = response;
       console.log(data);
-      
+
     } catch (error) {
       console.log(error);
     }
@@ -754,11 +754,11 @@ function Modules() {
     
                 // const {name, code, lecturer} = module;
                 return(
-                  <div  className='class-module' key={module?._id}>
-                      <h3>{module?.name}</h3> <span className='vertical-space'>|</span>
-                      <p>{module?.code}</p><span className='vertical-space'>|</span>
-                      <p className='class-module-lecturer'><strong>{module?.lecturer}</strong></p>
-    
+                  <div  className='cms-class-module cms-home-today' key={module?._id}>
+                        <p className='cms-today-name'>{module?.name}</p>
+                        <p className='cms-today-code'>{module?.code}</p>
+                        <p className='cms-today-lecturer'>{module?.lecturer}</p>
+                      
                       <div className="cms-class-module-controllers">
                         {
                           isFound? <button onClick={()=>{handleRemove(module?._id)}} className='cms-select-btn cms-leave-btn cms-remove-btn'> <RemoveCircleOutline className='cms-remove-icon' /></button>:
@@ -777,11 +777,10 @@ function Modules() {
     
                 // const {name, code, lecturer} = module;
                 return(
-                  <div className='class-module' key={module?._id}>
-                      <h3>{module?.name}</h3> <span className='vertical-space'>|</span>
-                      <p>{module?.code}</p><span className='vertical-space'>|</span>
-                      <p className='class-module-lecturer'><strong>{module?.lecturer}</strong></p>
-    
+                  <div className='cms-class-module cms-home-today' key={module?._id}>
+                       <p className='cms-today-name'>{module?.name}</p>
+                        <p className='cms-today-code'>{module?.code}</p>
+                        <p className='cms-today-lecturer'>{module?.lecturer}</p>
                       <div className="cms-class-module-controllers">
                         {
                           isFound? <button  onClick={()=>{handleLeave(module?._id)}} className='cms-select-btn cms-leave-btn'><RemoveCircleOutline/></button>:

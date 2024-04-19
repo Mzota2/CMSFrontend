@@ -264,7 +264,7 @@ function Students() {
                         username:'',
                         regNO:'',
                         email:'',
-                        password:'positiveChange++',
+                        password:process.env.REACT_APP_DEFAULT_PWD, //hide
                         program:'',
                         isClassRep:false
                     }}

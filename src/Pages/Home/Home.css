@@ -4,6 +4,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* background-image: url('../../Assets/image2.jpg'); */
+    background-size: cover;
+    background-color: black;
+    
 }
 
 
@@ -11,6 +17,22 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    animation: flashIn ease-in-out 2s forwards;
+}
+
+@keyframes flashIn {
+    0%{
+        opacity: 0;
+
+    }
+
+    50%{
+        opacity: 0.5;
+    }
+
+    100%{
+        opacity: 1;
+    }
     
 }
 
@@ -20,267 +42,264 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.105);
+    background-color: rgba(0, 0, 0, 0.535);
 }
-
-.home-image-controllers{
-    z-index: 1;
-    top: calc(100% - 30px);
+.cms-home-message-container{
     width: 100%;
-    justify-content: center;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    gap: 1em;
-    align-items: center;
-}
-.ellipse-current{
-    border: 7px solid #171632;
-}
-.ellipse-button{
-    height: 20px;
-    width: 20px;
-    background-color:#89c3dc ;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.ellipse-button:hover,
-.ellipse-button:focus{
-    border: 7px solid #171632;
-}
-
-/* Notice */
-@keyframes moveUp {
-    from{
-        
-        bottom: 0%;
-    }
-    to{
-        
-        botttom: 120%;
-    }   
-}
-
-/* Notice animations */
-
-
-.cms-notice-board{
-    position: absolute;
-    right: 0;
-    bottom: 20%;
-}
-
-.class-announcement{
-    text-align: center;
-    color: white;
-    text-shadow:  2px 2px var(--light-blue);
-}
-.class-notice-top-container{
-    display: flex;
-    align-items: center;
-    gap: 2em;
-}
-
-.cms-notice-board-container{
-    height: 300px;
-    width: fit-content;
-    min-width: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1em;
-    background-color: rgba(0, 0, 0, 0.48);
-    border: 2px solid white;
-    padding: 4em 1em;
+    height: 100%;
     position: relative;
-    z-index: 2;
-    overflow: hidden;
-}
-
-
-.cms-notice-container{
-    left: 0%;
     display: flex;
     flex-direction: column;
-    gap: 0.5em;
-    background-color: rgba(23, 22, 50, 0.3);
-    padding: .5em 1em;
-    cursor: pointer;
-    z-index: 1;
-   
+    align-items: center;
+    justify-content: center;
 }
-
-.cms-notice-container:hover,
-.cms-notice-container:focus{
-    background-color: rgba(23, 22, 50);
+.cms-home-message-image-container{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
-.cms-notice-title{
-    font-weight: 500;
-    initial-letter: 2px;
-    color: rgba(255, 255, 255, 0.935);
-    font-size: 1.05rem;
-}
-
-.cms-notice-date-time{
+.cms-home-text-container{
+    max-width: 100%;
+    width: 400px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-    width: 100%;
-    font-size: 0.85rem;
-}
-
-.cms-notice-time{
+    flex-direction: column;
     color: white;
-   
+    gap: 1em;
+    align-items: center;
+    z-index: 1;
+    text-align: center;
+    padding: 0 1em;
 }
 
-.cms-notice-day{
+
+.cms-engineering-mindset{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    text-align: center;
+    flex-direction: column;
+}
+.cms-home-engineering-icon-container{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color:var(--dark-blue);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.cms-home-engineering-icon-container:hover,
+.cms-home-engineering-icon-container:focus{
+    transition: ease .5s;
+    background-color: var(--light-blue);
+}
+.cms-home-engineering-icon{
+    color: white!important;
+    font-size: 2rem !important;
+    order: 1;
+}
+
+.cms-home-message{
+    color: white;
+    font-size: 1.5rem;
+    order: 2;
+}
+.cms-home-message-quote{
     color: white;
     font-style: italic;
+    font-size: 1.5rem;
 }
 
-.cms-notice-expand-icon{
-    z-index: 1;
-    cursor: pointer;
-    height: 40px;
-    width: 50px;
-    padding: 1em;
-    background-color: #252525;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    align-self: flex-end;
-    position: absolute;
-    margin-top: 1em;
-    bottom: 0%;
-    right: 0%;
+.cms-home-message-author{
+    color: var(--light-blue);
+    font-size: 1.2rem;
 }
-
-.cms-notice-expand-icon:hover,
-.cms-notice-expand-icon:focus{
-    transition: ease 0.5s;
-    background-color: white;
-    color: black;
-    border: none;
-}
-
-/* notice animation automatic scroll upwards */
-/* height 300px */
+/* Notice */
 
 
-/* .cms-notice-board-container::after,
-.cms-notice-board-container::before{
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    content: '';
-    height: 15%;
-    position: absolute;
-    width: 100%;
-    z-index: 2;
-} */
 
-.cms-notice-board-container::before{
-    bottom: 0;
-    left: 0;
-}
-
-.cms-notice-board-container::after{
-    top: 0;
-    left: 0;
-}
-
-.cms-notice-animation-track{
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    align-items: center;
-    justify-content: center;
-    animation:scroll 20s linear infinite;
-    transform: translateY(100%);
-}
-
-.cms-notice-animation-track:hover,
-.cms-notice-animation-track:focus{
-    animation-play-state: paused;
-}
-
-@keyframes scroll{
-    0%{
-        transform: translateY(100%);
-
-    }
-    100%{
-        /* transform: translateY(calc(-40px * 9)); */
-        transform: translateY(calc(-100%));
-    }
-}
-
-
-/* IMPORTANT */
-.class-important-tabs-container{
-    padding: 0 6em;
+/* Welcome engineer */
+.cms-home-welcome-engineer{
+    background-color: var(--dark-blue);
     height: 10vh;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    background-blend-mode:color-dodge;
-    background-color: rgba(0, 0, 0, 0.7);
+    gap: 1em;
+    justify-content: center;
+    color: white;
 }
 
-.cms-tab{
-    cursor: pointer;
-    border: none;
-    outline: none;
-    height: 100%;
-    width: 100%;
-    background-color:rgb(16, 125, 172);
-    border-right: 2px solid white;
-    color: white;
-    font-size: 1.125rem;
-    letter-spacing: 2px;
+.cms-home-engineer-text{
+    font-size: 1.5rem;
+}
+
+.cms-home-engineering-icon{
+    font-size: 3rem !important;
+}
+
+/* Today's Classes */
+
+.cms-home-section{
+    margin-top: 2em;
     display: flex;
-    gap: 0.7em;
+    flex-direction: column;
+    gap: 2em;
+    padding: 1em 3em;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cms-home-section-button{
+    background-color: var(--light-blue);
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: .5em 2em;
+    
+}
+
+.cms-home-expand-container{
+    margin-left: auto;
+    height: 50px;
+    width: 50px;
+    background-color: var(--feint-blue);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.cms-home-section-title{
+    font-size: 1.5rem;
+    color: rgb(255, 255, 255);
 }
 
-.cms-tab:hover,
-.cms-tab:focus{
-   
-    background-color:rgba(16, 125, 172, 0.318);
-    transition: 0.5s ease;
-}
-
-
-.cms-tab:hover .cms-important-icon-container {
-    background-color:white;
-    transition: 0.5s ease;
-    color: black;
-}
-.cms-important-icon{
+.cms-home-expand-icon{
     font-size: 1.5rem !important;
 }
 
-.cms-important-icon-container{
-    max-height: 60%;
-    padding: .5em;
-    background-color: black;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.cms-home-expand-container:hover,
+.cms-home-expand-container:focus{
+    opacity: .5;
+    transition: ease .5s;
 }
 
+.cms-home-todays-classes{
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    background-color: var(--smooth-blue);
+    padding: 2em;
+}
 
+.cms-home-today{
+    position: relative;
+    padding: 1em;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    
+}
+.cms-home-today-details{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+.cms-home-today-more-info{
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
+    color: white;
+    background-color: var(--dark-blue);
+    box-shadow: 0px -2px 2px 4px rgba(103, 255, 247, 0.118);
+}
 
+.cms-module-dy-info{
+    padding: .5em;
+}
+
+.cms-module-dy-home{
+    width: 100%;
+}
+
+.cms-home-today:hover,
+.cms-home-today:focus{
+    background-color: var(--dark-blue);
+    color: white;
+}
+
+.cms-today-lecturer{
+    color: var(--light-blue);
+}
+
+.cms-today-isActive{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    font-size: .5rem !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+/* Projects and Innovations */
+.cms-projects-innovations{
+    display: flex;
+    align-items: center;
+    gap: 2em;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.cms-home-project{
+    height: 400px;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--smooth-blue);
+    justify-content: space-between;
+}
+.cms-project-image-container{
+    height: 60%;
+    width: 100%;
+
+}
+.cms-project-details{
+    display: flex;
+    flex-direction: column;
+    gap: .6em;
+    padding: 1em;
+}
+
+.cms-project-image{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.cms-projects-btn{
+    background-color: var(--dark-blue);
+    font-size: 1rem;
+    border-radius: 100px;
+    max-width: 200px;
+    align-self: center;
+    color: white;
+}
 /* FOOTER */
 .footer-line{
     border: 2px solid  #1a1a1c;
@@ -293,203 +312,45 @@
     font-family: 'Roboto', serif;
 }
 
-/* other */
-.cms-mobile-floating-action-btn{
-    display: none;
+.cms-footer{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 2em 0;
+
 }
 
-.cms-today-mobile-info-container{
-    display: none;
-}
 
-@media (max-width:715px){
-    .class-important-tabs-container{
-        width: 100%;
-        padding: 0;
-    }
-
-    .cms-tab{
-        margin: 0;
+@media (max-width:900px) {
+    .cms-home-project{
+        min-width: 300px;
     }
 }
 
-@media (max-width:610px) {
+@media (max-width:450px) {
+    .cms-home-section{
+        padding: 1em 1em;
+    }
+    .cms-home-project{
+        min-width: 100%;
+    
+    }
 
-    .cms-tab{
+    .cms-home-expand-container{
+        height: 30px;
+        width: 30px;
+    }
+
+    .cms-home-section-title{
+        font-size: 1.1rem;
+    }
+    .cms-today-name{
         display: none;
     }
 
-    .class-important-tabs-container{
-        position: relative;
-        display: block;
-        overflow-x: auto;
-        /* display: none; */
-        background-color: black;
-        z-index: 1;
-        
-    }
-
-    .cms-today-mobile-info-container{
-        bottom: 0;
-        right: 0;
-        position: absolute;
-        display: flex;
-        align-items: center;
-        gap: 1em;
-        height: 100%;
-        /* transform: translateX(100%); */
-        animation: scrollMessage 30s linear infinite;
-
-    }
-
-    .cms-today-animate{
-        flex-shrink: 0;
-        font-family: 'Times New Roman', Times, serif;
-        /* transform: translateX(200%); */
-        /* animation: scrollMessage 10s linear infinite; */
-    }
-    .cms-today-hello-text, .cms-today-title{
-        color: white;
-    }
-
-    .cms-today-cls-mobile{
-        background-color: transparent !important;
-        color: white;
-        width: 100%;
-        border: none !important;
-
-    }
-
-    html{
-        overflow-x: hidden;
-    }
-
-    @keyframes scrollMessage {
-        from{
-            transform: translateX(100%);
-        }
-
-        to{
-            transform: translateX(-100%);
-        }
-        
-    }
-
-    .cms-important-floating-buttons{
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-        align-items: center;
-        position: absolute;
-        bottom: 15%;
-        right: 2%;
-    }
-
-    .cms-mobile-floating-action-btn{
-        display: block;
-        background-color: var(--light-blue);
-        height: 40px;
-        width: 40px;
-        box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.135);
-        border-radius: 50%;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem !important;
-        z-index: 1;
-    }
-
-    .cms-view-exams-floating-btn{
-        background-color: green;
-        z-index: 0;
-    }
-
-    .cms-view-assign-floating-btn{
-        background-color: purple;
-        z-index: 0;
-    }
-
-    @keyframes slideDown {
-        from{
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        to{
-            transform: translateY(100%);
-            opacity: 0;
-        }
-    }
-
-    @keyframes slideUp {
-        from{
-            transform: translateY(100%);
-        }
-        to{
-            transform: translateY(0);
-        }
-        
-    }
-
-    .aslideUp{
-        animation: slideUp 2s ease forwards;
-    }
-
-    .aslideDown{
-        animation: slideDown 2s ease forwards;
-        /* display:none ; */
-    }
-
-
-    .cms-notice-board{
-        width: 90%;
-        right: 20%;
-        left: 20%;
-        bottom: 15%;
-        max-width: 250px;
-    }
-
-    .class-notice-top-container{
-        width: 100%;
-    }
-
-    .class-announcement{
-        font-size: 1.25rem;
-    }
-    /* .cms-notice-title{
-        font-size: 3rem;
-    } */
-
-    /* .home-image-container{
-        height: 40vh;
-    } */
-
-
-}
-
-@media (max-width:400px) {
-    .cms-notice-board{
-        left: 5%;
-        
+    .cms-home-today{
+        font-size: 0.85rem;
     }
     
 }
 
-@media (max-height:500px){
-    .cms-notice-board{
-        height: 70%;
-    }
-
-    .class-notice-top-container{
-        height: fit-content;
-    }
-
-    .cms-notice-board-container{
-        height: 70%;
-    }
-
-
-
-}

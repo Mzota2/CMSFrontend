@@ -29,6 +29,7 @@
     justify-content: space-between;
     z-index: 1;
 }
+
 .signin--option{
     border-image-source: linear-gradient(to left, #04fff2, #2c275c);;
     border-bottom: 2px solid;
