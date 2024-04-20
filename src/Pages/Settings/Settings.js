@@ -33,6 +33,7 @@ function Settings() {
   function handleNewPassword(e){
     setNewPassword(e.target.value);
   }
+
   function handleChange(e){
     setUser(prev => {
       return {
@@ -55,12 +56,17 @@ function Settings() {
 
   async function updatePassword(){
     try {
-      if(isPreviousPWD && passwordMatch){
-        const response = await axios.put(`${appUrl}student/${user?._id}`, {password:newPassword});
-        const {data} = response;
-        setUser(data);
-        message.success("changed password successfully");
+      if(newPassword?.length >= 7){
+        if(isPreviousPWD && passwordMatch){
+          const response = await axios.put(`${appUrl}student/${user?._id}`, {password:newPassword});
+          const {data} = response;
+          setUser(data);
+          message.success("changed password successfully");
+        }
+      }else{
+        message.error('Enter at least 7 characters');
       }
+      
 
       
     } catch (error) {
