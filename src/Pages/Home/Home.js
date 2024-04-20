@@ -181,18 +181,18 @@ function Home() {
 
         <div className="home-image-container">
 
-        <div className="cms-home-welcome-engineer">
-          <Engineering className='cms-home-engineering-icon' />
-          <h4 className='cms-home-engineer-text'>
-            {
-            program?.code === 'BECE'?'Computer Engineer':
-            program?.code === 'BETE'? 'Telecommunication Engineer':
-            program?.code === 'BBME'? 'Biomedical Engineer':
-            program?.code === 'BEEE'? 'Electrical Engineer':''
-            }
-          
-          </h4>
-        </div>
+          <div className="cms-home-welcome-engineer">
+            <Engineering className='cms-home-engineering-icon' />
+            <h4 className='cms-home-engineer-text'>
+              {
+              program?.code === 'BECE'?'Computer Engineer':
+              program?.code === 'BETE'? 'Telecommunication Engineer':
+              program?.code === 'BBME'? 'Biomedical Engineer':
+              program?.code === 'BEEE'? 'Electrical Engineer':''
+              }
+            
+            </h4>
+          </div>
 
           <div style={{display:`${homeAnimeIndex === 0? 'flex':'none'}`}} className="cms-home-message-container">
             
