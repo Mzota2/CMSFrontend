@@ -126,6 +126,7 @@
 
 /* Welcome engineer */
 .cms-home-welcome-engineer{
+    z-index: 2;
     position: absolute;
     bottom: 0%;
     right: 0;
