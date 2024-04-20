@@ -1,12 +1,13 @@
-import React , {useRef, useState}from 'react'
+import React , {useEffect, useRef, useState}from 'react'
 import {Link} from 'react-router-dom';
 import './NavBar.css';
 import {AccountCircle, EditNote} from '@mui/icons-material'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Account from '../Account/Account';
 import {Close, Menu, GroupWork, LocalLibrary, Home, People, Abc, School, AddCircle, Notifications} from '@mui/icons-material';
-
+import {getAnnouncements} from '../../State/AnnouncementsSlice';
 import {useNavigate} from 'react-router-dom';
+
 
 function NavBar() {
     const navigate = useNavigate();
@@ -14,8 +15,15 @@ function NavBar() {
 
     const [activeNav, setActiveNav] = useState('Home');
 
+     //announcements
+     const foundAnnouncements = useSelector(state => state.announcements.data);
+     const announcementsStatus = useSelector(state => state.announcements.status);
+     const [announcements, setAnnouncements] = useState([]);
+
    
-    
+
+     const dispatch = useDispatch();
+ 
     const [showMenu, setShowMenu] = React.useState(false);
 
     //active tab
@@ -36,8 +44,23 @@ function NavBar() {
         setShowAccount(prev => !prev);
     }
 
+    useEffect(()=>{
+        if(announcementsStatus === 'idle'){
+            dispatch(getAnnouncements());
+        }
+
+        else if(announcementsStatus !== 'idle'){
+            setAnnouncements(foundAnnouncements);
+
+        }
+
+       
+
+    }, [dispatch, announcementsStatus, foundAnnouncements])
+
     
   return (
+    
     <header>
 
         <Account handleShowAccount={handleShowAccount} show={showAccount} student={activeUser} handleClose={handleShowAccount}/>
@@ -103,7 +126,7 @@ function NavBar() {
                 <div onClick={()=>{navigate('/announcements')}} className="cms-home-notification-container">
                     <Notifications className='cms-notification-icon'/>
                     <div className="cms-notifications-count">
-                        1
+                        {announcements?.length <=9?announcements?.length :announcements?.length > 9?'9+':0}
                     </div>
                 </div>
 
@@ -139,7 +162,6 @@ function NavBar() {
 
                 <div  onClick={handleShowAccount} className="profile-menu-icon-container">
                     {showAccount?<Close className='cms-menu-icon'/>:<Menu className='cms-menu-icon'/>}
-                    
                 </div>
 
                 

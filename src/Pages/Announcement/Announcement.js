@@ -10,6 +10,9 @@ import Loader from '../../Components/Loader/Loader';
 
 function Announcement() {
 
+    //active user
+    const activeUser= useSelector(state=> state.students.activeUser);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const dispatch = useDispatch();
@@ -18,6 +21,7 @@ function Announcement() {
     const foundAnnouncements = useSelector(state => state.announcements.data);
     const announcementsStatus = useSelector(state => state.announcements.status);
     const [announcements, setAnnouncements] = useState();
+
 
     //create announcement
     const [mAnnouncement, setMannouncement] = useState({
@@ -92,7 +96,6 @@ function Announcement() {
 
             const response = await axios.post(`${appUrl}announcement`, {...mAnnouncement, time:setTime(), date:setDate()});
             const {data} = response;
-            console.log(data);
             
         } catch (error) {
             console.log(error);
@@ -112,7 +115,7 @@ function Announcement() {
         }
 
 
-    }, [dispatch, announcementsStatus, foundAnnouncements]);
+    }, [dispatch, announcementsStatus, foundAnnouncements, activeUser]);
 
     // if(isLoading){
     //     return <Loader/>
@@ -151,36 +154,42 @@ function Announcement() {
       </div>
 
       <br />
+        {activeUser?.isClassRep && <div>
+      
+            <h3>Make Announcement</h3>
 
-      <h3>Make Announcement</h3>
+            <br />
 
-      <br />
+            <form className='cms-announcement-form'>
+                        
+                    
+                        <div className="cms-row">
+                            <input value={mAnnouncement.agenda}  onChange={handleChange} name='agenda' type="text" placeholder='Enter agenda' className='cms-input-field cms-assign-field' />
+
+                        
+                            <select onChange={handleChange} value={mAnnouncement.duration} name="duration" id="duration" className='cms-input-field cms-assign-field'>
+                                <option value="">Duration</option>
+                                <option value={dayOfYear(new Date(dd?.getFullYear(), dd?.getMonth(), dd?.getDay()))}>A Day</option>
+                                <option value={getNumberOfWeek()}>A Week</option>
+                                <option value={month}>A Month</option>
+                            </select>
+                        </div>
+
+
+                        <textarea placeholder='Enter description'  value={mAnnouncement.description}  onChange={handleChange}  name="description" id="description" cols="30" rows="10" className='cms-input-field cms-assign-field cms-announce-text-area'></textarea>
+            
+                        
+                        <button type='button' onClick={makeAnnouncement} className='cms-btn cms-btn-save cms-create-assign-btn'>Send</button>
+                        <hr className='hr' />
+                        
+                        
+                    
+            </form>
+        </div>
+        }
     
-        <form className='cms-announcement-form'>
-                    
-                 
-                    <div className="cms-row">
-                        <input value={mAnnouncement.agenda}  onChange={handleChange} name='agenda' type="text" placeholder='Enter agenda' className='cms-input-field cms-assign-field' />
-
-                       
-                        <select onChange={handleChange} value={mAnnouncement.duration} name="duration" id="duration" className='cms-input-field cms-assign-field'>
-                            <option value="">Duration</option>
-                            <option value={dayOfYear(new Date(dd?.getFullYear(), dd?.getMonth(), dd?.getDay()))}>A Day</option>
-                            <option value={getNumberOfWeek()}>A Week</option>
-                            <option value={month}>A Month</option>
-                        </select>
-                    </div>
-
-
-                    <textarea placeholder='Enter description'  value={mAnnouncement.description}  onChange={handleChange}  name="description" id="description" cols="30" rows="10" className='cms-input-field cms-assign-field cms-announce-text-area'></textarea>
-        
-                    
-                    <button type='button' onClick={makeAnnouncement} className='cms-btn cms-btn-save cms-create-assign-btn'>Send</button>
-                    <hr className='hr' />
-                    
-                    
-                
-        </form>
+    
+     
 
     </div>
   )

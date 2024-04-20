@@ -21,29 +21,38 @@
 
 .cms-account-container{
     position: absolute;
-    top: 100%;
+    top: 0;
     right: -100%;
     width: 100%;
     max-width: 350px;
     background-color: white !important;
-    box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.55);
+    box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.3);
     z-index: 2;
     padding: 2em;
     gap: 1em;
     animation-duration: 1s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
+    height: 100vh;
+    overflow-y: auto;
 
 }
 
 /* USER INFO */
-
+.hrb{
+    width: 100%;
+    border: 1px solid rgba(76, 74, 95, 0.296);
+}
 .cms-account-user-info-container{
     display: flex;
     flex-direction: column;
-    gap: 1em;
-    height: 500px;
-    overflow-y: auto;
+    gap: 1.5em;
+}
+
+.cms-account-profile-menu-icon{
+    margin-left: 0;
+    align-self: center;
+    cursor: pointer;
 }
 
 .cms-account-student-container{

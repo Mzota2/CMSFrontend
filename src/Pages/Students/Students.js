@@ -15,9 +15,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Loader from '../../Components/Loader/Loader';
 
 function Students() {
-
-
-
     const [displayAdd, setDisplayAdd] = React.useState(false);
     const [displayEdit, setDisplayEdit] = React.useState(false);
     const [studentId, setStudentId] = React.useState('');
@@ -37,6 +34,10 @@ function Students() {
     });
 
     const [isLoading, setIsLoading] = React.useState(false);
+
+    //active user
+
+     const activeUser = useSelector(state => state.students.activeUser);
 
     //programs
     const foundPrograms = useSelector(state => state.programs.data);
@@ -66,7 +67,6 @@ function Students() {
                 regNO: fdStudent?.regNO,
                 email:fdStudent?.email,
                 isClassRep:fdStudent?.isClassRep
-            
             }
         });
 
@@ -109,25 +109,13 @@ function Students() {
     }
 
     function handleSearch(){
-
-        console.log('clicked');
-
         const foundStudents = allStudents?.filter((student)=>{
             const matchArg = new RegExp(search, 'ig');
 
             return student?.username.match(matchArg) || student?.regNO.match(matchArg)
-
-            
-                     
-           
         });
-
-        console.log(foundStudents);
         
         setFilterStudents(foundStudents);
-
-        console.log(students);
-
     }
 
     function handleFilterProgram(e){
@@ -189,7 +177,6 @@ function Students() {
             setIsLoading(true);
             const response = await axios.delete(`${appUrl}student/${studentId}`);
             const {data} = response;
-            console.log(data);
             const studentsNow = students?.filter((student)=> student._id !== studentId);
             setStudents(studentsNow);
 
@@ -206,7 +193,6 @@ function Students() {
             setIsLoading(true);
             const response = await axios.put(`${appUrl}student/${studentId}`, {username:student.username, regNO:student.regNO, email:student.email, isClassRep:student.isClassRep});
             const {data} = response;
-            console.log(data);
             
         } catch (error) {
             console.log(error);
@@ -237,11 +223,8 @@ function Students() {
             setPrograms(foundPrograms);
         }
 
-        console.log(studentsPage.startIndex);
-        console.log(studentsPage.endIndex);
-        console.log(filterStudents);
 
-    }, [dispatch, studentsStatus, student, filterStudents, programsStatus]);
+    }, [dispatch, studentsStatus, student, filterStudents, programsStatus, activeUser]);
 
 
     if(studentsStatus === 'idle'){
@@ -365,15 +348,15 @@ function Students() {
                             {
                                 programs?.map((program)=>{
                                     return(
-                                        <option value={program?._id}>{program?.code}</option>
+                                        <option key={program?._id} value={program?._id}>{program?.code}</option>
                                     )
                                 })
                             }
                         </select>
 
-                        <div onClick={handleDisplayAdd} className="add-student">
+                        {activeUser?.isClassRep && <div onClick={handleDisplayAdd} className="add-student">
                             <Add className='add-icon' />
-                        </div>
+                        </div>}
                     </div>
                     
 
@@ -387,21 +370,23 @@ function Students() {
                     {students?.slice(studentsPage.startIndex, studentsPage.endIndex)?.map((student)=>{
 
                         const {username, regNO} = student;
-                        return(
-                            <div  key={student._id} className='class-student'>
-                                <div className="class-student-profile">
-                                    <AccountCircle className='student-profile-icon other-student-icon'/>
-                                    <p>{username}</p>
-                                    <p>{regNO}</p>
-                                </div>
+                        if(student?._id !== activeUser?._id){
+                            return(
+                                <div  key={student._id} className='class-student'>
+                                    <div className="class-student-profile">
+                                        <AccountCircle className='student-profile-icon other-student-icon'/>
+                                        <p>{username}</p>
+                                        <p>{regNO}</p>
+                                    </div>
 
-                                <div className="student-manage">
-                                    <button onClick={()=> handleDisplayEdit(student._id)} className='student-manage-btn student-edit-btn'> <Edit className='edit-icon'/></button>
-                                    <button onClick={()=>removeStudent(student._id)} className='student-manage-btn student-remove-btn'> <Delete className='remove-icon' /></button>
-                                </div>
+                                    <div className="student-manage">
+                                        <button onClick={()=> handleDisplayEdit(student._id)} className='student-manage-btn student-edit-btn'> <Edit className='edit-icon'/></button>
+                                       { activeUser?.isClassRep && <button onClick={()=>removeStudent(student._id)} className='student-manage-btn student-remove-btn'> <Delete className='remove-icon' /></button>}
+                                    </div>
 
-                            </div>
-                        )
+                                </div>
+                            )
+                    }
                     })}
                    
 

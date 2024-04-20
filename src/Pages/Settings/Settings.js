@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { appUrl } from '../../Helpers';
+import {message } from 'antd';
 // import {compare} from 'bcrypt'
 
 import './Settings.css';
@@ -32,9 +33,6 @@ function Settings() {
   function handleNewPassword(e){
     setNewPassword(e.target.value);
   }
-
-  
-
   function handleChange(e){
     setUser(prev => {
       return {
@@ -48,7 +46,6 @@ function Settings() {
     try {
       const response = await axios.put(`${appUrl}student/${user?._id}`, {...user, username:user?.username, regNO:user?.regNO});
       const {data} = response;
-      console.log(data);
       setUser(data);
       window.alert("Updated user successfully");
     } catch (error) {
@@ -61,9 +58,8 @@ function Settings() {
       if(isPreviousPWD && passwordMatch){
         const response = await axios.put(`${appUrl}student/${user?._id}`, {password:newPassword});
         const {data} = response;
-        console.log(data);
         setUser(data);
-        window.alert("changed password successfully");
+        message.success("changed password successfully");
       }
 
       
@@ -79,18 +75,13 @@ async function verifyPWD(user){
   try {
     const response = await axios.post(`${appUrl}student/signin`, {email:user?.email, password:password});
     const {data} = response;
-    console.log(data);
 
     setIsPreviousPWD(true);
     
   } catch (error) {
   
     setIsPreviousPWD(false);
-    
-  
-   
     console.log(error);
-    
   }
 
 }
@@ -106,12 +97,8 @@ async function verifyPWD(user){
     if(foundUser){
       setUser(foundUser);
       verifyPWD(foundUser)
-      console.log(foundUser?.password);
-
+      
     }
-
-    console.log(isPreviousPWD);
-    console.log(passwordMatch);
 
   }, [foundUser, password, confirmPassword])
   return (

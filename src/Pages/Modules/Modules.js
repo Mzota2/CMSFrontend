@@ -1,28 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Modules.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { getModules } from '../../State/ModulesSlice';
 import { getPrograms } from '../../State/ProgramsSlice';
 import {getStudents, setActive} from '../../State/StudentsSlice'
-import { Link } from 'react-router-dom';
-import SubNav from '../../Components/SubNav/SubNav';
 import { appUrl } from '../../Helpers';
 import axios from 'axios';
 import { moduleSchema } from '../../Components/Yup/Schema';
 import {Formik} from 'formik'
 import {CircularProgress} from '@mui/material'
-import {Add, Close, Remove, Edit, Delete, RemoveCircleOutline, AddCircleOutline} from '@mui/icons-material';
-
+import {Add, Close, Remove, RemoveCircleOutline, AddCircleOutline} from '@mui/icons-material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import moduleBackgroundImage from '../../Assets/modules.jpg';
-import Loader from '../../Components/Loader/Loader';
+import ModuleMenu from '../../Components/ModuleMenu/ModuleMenu';
 
 function Modules() {
-
-
-
   //active tab
 
   const [activeTab, setActiveTab] = React.useState('My Modules');
+
+  //modulw options
+  const [displayModuleOptions, setDisplayModuleOptions] = useState(false);
+  const [selectedModule, setSelectedModule] = useState('');
 
   //DOM
   const [viewEditModule, setViewEditModule] = React.useState(false);
@@ -93,6 +92,11 @@ function Modules() {
 
   }
 
+  function handleDisplayModuleOptions(id){
+    setDisplayModuleOptions(prev => !prev);
+    setSelectedModule(id);
+  }
+
   function handleViewEditModule(){
     setViewEditModule(prev => !prev);
   }
@@ -143,7 +147,6 @@ function Modules() {
   }
 
   function handleUpdateModule(values){
-    console.log(values);
 
     const currentModule = {...values, classDays};
     editModule(currentModule, currentModule?._id);
@@ -155,7 +158,6 @@ function Modules() {
 
       const response = await axios.put(`${appUrl}module/${id}`, module);
       const {data} = response;
-      console.log(data);
       
     } catch (error) {
       console.log(error);
@@ -230,8 +232,7 @@ function Modules() {
   }
 
   async function handleEnroll(id){
-    console.log(id);
-    
+
     try {
       const studentModules =user?.modules?user?.modules.concat(id):[id];
 
@@ -243,7 +244,7 @@ function Modules() {
       dispatch(setActive(data));
       
     } catch (error) {
-      console.log(error);
+      
     }
   }
 
@@ -252,7 +253,6 @@ function Modules() {
       const studentModules = user?.modules?.filter((md)=> md !== id);
       const response = await axios.put(`${appUrl}student/${user?._id}`, {...user, modules:studentModules});
       const {data} = response;
-      console.log(data);
       localStorage.setItem('cms-user', JSON.stringify(data));
       dispatch(setActive(data));
       
@@ -264,17 +264,15 @@ function Modules() {
 
   async function handleAdd(id){
     try {
-      console.log(id);
 
       const selectedModule = modules?.find((md)=> md?._id === id);
-      console.log(selectedModule?.programsId)
       const modulePrograms = selectedModule?.programsId? selectedModule.programsId?.concat(user?.program):[user?.program];
 
       console.log(modulePrograms);
       const response = await axios.put(`${appUrl}module/${id}`, {...selectedModule, programsId:modulePrograms});
       const {data} = response;
       dispatch(getModules()); //get updated modules list
-      console.log(data);
+
       
     } catch (error) {
       console.log(error);
@@ -283,8 +281,6 @@ function Modules() {
 
   async function handleRemove(id){
     try {
-
-      console.log(id);
       const selectedModule = modules?.find((md)=> md?._id === id);
       const modulePrograms = selectedModule?.programsId?.filter((pg)=> pg !== user?.program);
       console.log(modulePrograms);
@@ -303,7 +299,6 @@ function Modules() {
 
   }
   function handleSubmit(values,action){
-    console.log(values);
     createModule(values);
   }
 
@@ -319,8 +314,6 @@ function Modules() {
   
       ]
     });
-    
-    console.log(classDays);
   }
 
 
@@ -348,8 +341,6 @@ function Modules() {
   
       ]
     });
-    
-    console.log(classDays);
   }
 
 
@@ -395,23 +386,18 @@ function Modules() {
         const allModules = foundModules?.filter((md)=>{
           return md?.programsId.find((pg)=> pg === user?.program); //find the modules in that program
         });
-    
-        console.log(allModules);
         setModules(allModules);
       }
-    
-    
-      
+  
     }
 
     if(programsStatus === 'idle'){
       dispatch(getPrograms());
     }
     else if(programsStatus !== 'idle' ){
-      console.log('it is active');
       const userProgram = foundPrograms?.find((program)=> program._id === user?.program);
       setProgram(userProgram);
-      console.log(user);
+  
     }
 
     if(studentsStatus  === 'idle'){
@@ -736,11 +722,11 @@ function Modules() {
                 <button onClick={handleMyModules} className={`${activeTab === 'My Modules' ? 'activate-tab':'class-module-tab'} class-module-tab`}>My Modules</button>
                 <button onClick={handleAllModules} className={`${activeTab === 'Program' ? 'activate-tab':'class-module-tab'} class-module-tab`}>Program</button>
     
-                <button onClick={handleDepartmentModules} className={`${activeTab === 'Department' ? 'activate-tab':'class-module-tab'} class-module-tab`}>Department</button>
-                
-                <div onClick={handleViewAddModule} className="add-student cms-add-module-btn">
+                {activeStudent?.isClassRep && <button onClick={handleDepartmentModules} className={`${activeTab === 'Department' ? 'activate-tab':'class-module-tab'} class-module-tab`}>Department</button>
+                }
+                {activeStudent?.isClassRep && <div onClick={handleViewAddModule} className="add-student cms-add-module-btn">
                         <Add className='add-icon' />
-                </div>
+                </div>}
           
           </div>
 
@@ -754,12 +740,20 @@ function Modules() {
     
                 // const {name, code, lecturer} = module;
                 return(
-                  <div  className='cms-class-module cms-home-today' key={module?._id}>
+                  <div  className='cms-class-module' key={module?._id}>
                         <p className='cms-today-name'>{module?.name}</p>
                         <p className='cms-today-code'>{module?.code}</p>
                         <p className='cms-today-lecturer'>{module?.lecturer}</p>
-                      
-                      <div className="cms-class-module-controllers">
+
+
+                      <div onClick={()=>{handleDisplayModuleOptions(module?._id)}} className="cms-module-options-icon-container">
+                        <MoreVertIcon  className='cms-module-options-icon'/>
+                      </div>
+
+
+                      {displayModuleOptions && selectedModule===module?._id?<ModuleMenu display={displayModuleOptions} handleDisplay={handleDisplayModuleOptions} isFound={isFound} handleEdit={()=>{handleDisplayEditModule(module?._id)}} handleRemove={()=>{handleRemove(module?._id)}} handleAdd={()=>{handleAdd(module?._id)}} handleDelete={()=>{deleteModule(module?._id)}} />:<></>}
+
+                      {/* <div className="cms-class-module-controllers">
                         {
                           isFound? <button onClick={()=>{handleRemove(module?._id)}} className='cms-select-btn cms-leave-btn cms-remove-btn'> <RemoveCircleOutline className='cms-remove-icon' /></button>:
                           <button onClick={()=>{handleAdd(module?._id)}} className='cms-select-btn cms-enroll-btn'> <AddCircleOutline/></button>
@@ -767,7 +761,9 @@ function Modules() {
 
                         <button onClick={()=>{handleDisplayEditModule(module?._id)}} className='cms-select-btn cms-enroll-btn cms-edit-btn'> <Edit /></button>
                         <button onClick={()=>{deleteModule(module._id)}} className='cms-select-btn cms-leave-btn cms-delete-btn'> <Delete/></button>
-                      </div>
+                      
+                      
+                      </div> */}
     
     
                   </div>

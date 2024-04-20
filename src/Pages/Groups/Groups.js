@@ -7,7 +7,7 @@ import axios from 'axios'
 import './Groups.css';
 import { appUrl } from '../../Helpers';
 import { getModules } from '../../State/ModulesSlice';
-import groupsImage from '../../Assets/groups.jpg';
+import groupsImage from '../../Assets/class.jpg';
 import {Parallax, ParallaxLayer} from '@react-spring/parallax'
 import { Link } from 'react-router-dom';
 import {Close, ArrowBack, ArrowForward} from '@mui/icons-material';
@@ -35,7 +35,6 @@ function Groups() {
 
         //Updates the value of selected module for groups
     const [groupModule, setGroupModule] = useState([]);
-
 
     //parallax
     const parallax = useRef(null);
@@ -66,8 +65,6 @@ function Groups() {
     const studentModules = useSelector(state => state.students.modules);
     const [moduleStudents, setModuleStudents] = React.useState();
 
-
-
     //get groups from api
     const foundGroups = useSelector(state => state.groups.data);
     const groupsStatus = useSelector(state => state.groups.status);
@@ -89,10 +86,7 @@ function Groups() {
             moduleIndex:index
           }
         })
-      }
-
-      console.log(selectedModule);
-      
+      } 
     }
 
     //handles task selection
@@ -104,7 +98,6 @@ function Groups() {
         }
       })
     }
-
     //handles selected module
 
     function handleSelectedModule(e){
@@ -135,8 +128,6 @@ function Groups() {
         
         const response = await axios.put(`${appUrl}module/${selectedModule}`, {assignments:updatedAssignments})
         const {data} = response;
-
-        console.log(data);
         
       } catch (error) {
         console.log(error);
@@ -204,10 +195,6 @@ function Groups() {
     function formGroupsByStudents(collection, students){
        //numver of groups = collection.length/number
        //members num = students;
-
-      
-
-       
       setPending(true);
 
        setTimeout(()=>{
@@ -265,7 +252,7 @@ function Groups() {
                 let groupIndex = generateRandom(groups);
                 let additionalIndex = generateRandom(additional);
                 const foundAdditional = groups?.find((group)=> group.includes(additional[additionalIndex]) );
-                console.log(foundAdditional);
+                // console.log(foundAdditional);
                 if(groups[groupIndex].length < students + 1){
                   if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
                     groups[groupIndex].push(additional[additionalIndex]);
@@ -273,25 +260,18 @@ function Groups() {
                   }
                 }
       
-                
-            
                 groupLength = groups.flat().length;
-                console.log(groupLength);
 
               }
-
-
 
             }
           
   
-            console.log(groups);
+            // console.log(groups);
 
-  
-            
             const finalG = [...addRep(groups, groupReps)];
             setResultGroups(finalG);
-            console.log(finalG)
+            // console.log(finalG)
             
     
           }
@@ -351,16 +331,13 @@ function Groups() {
      
          if((moduleStudents?.length / number) >= 2){
            var groupLength = groups.flat().length;
-           console.log(groups.flat());
-           let additionalCount = 0;
-           
-         
-           
+          //  console.log(groups.flat());
+          
            while(groupLength < collection.length){
              let groupIndex = generateRandom(groups);
              let additionalIndex = generateRandom(additional);
              const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
-             console.log(foundAdditional);
+            //  console.log(foundAdditional);
    
              if(groups[groupIndex].length < membersNum + 1){
                if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
@@ -374,7 +351,6 @@ function Groups() {
            }
    
            const finalG = [...addRep(groups, groupReps)];
-         
            setResultGroups(finalG);
    
          }
@@ -392,7 +368,7 @@ function Groups() {
     function handleSelectRep(student){
       const foundRep = groupReps?.find((rep)=> rep?._id === student?._id);
 
-      console.log('clicked');
+      // console.log('clicked');
      
       if(foundRep){
         const index = groupReps?.indexOf(foundRep);
@@ -405,9 +381,8 @@ function Groups() {
       }
 
       else{
-
         //
-        console.log('current members');
+        // console.log('current members');
         setGroupReps(prev => {
           return [...prev, student]
         });
@@ -432,11 +407,9 @@ function Groups() {
   function handlePagerForward(){
     //
       const groupsNum =  apiGroups[assignPage.index]?.assignments?.length;
-      console.log(groupsNum);
+      
       
       if(groupsPage.endIndex < groupsNum){
-        console.log("clicked forward")
-        
         setGroupsPage(prev =>{
               return{
                   ...prev,
@@ -450,20 +423,20 @@ function Groups() {
   }
 
   //select module
-  function handleModuleGroups(id){
+  // function handleModuleGroups(id){
 
-    const selectedModule = apiGroups?.find((md)=> md?._id === id);
-    if(selectedModule){
-      const index = apiGroups?.indexOf(selectedModule);
-      setAssignPage(prev =>{
-        return {
-          ...prev,
-          index
-        }
-      });
-    }
+  //   const selectedModule = apiGroups?.find((md)=> md?._id === id);
+  //   if(selectedModule){
+  //     const index = apiGroups?.indexOf(selectedModule);
+  //     setAssignPage(prev =>{
+  //       return {
+  //         ...prev,
+  //         index
+  //       }
+  //     });
+  //   }
   
-  }
+  // }
 
     React.useEffect(()=>{
       if(groupsStatus === 'idle'){
@@ -552,7 +525,7 @@ function Groups() {
     
       <div>
 
-          <Parallax ref={parallax} pages={3}>
+          <Parallax ref={parallax} pages={activeStudent?.isClassRep? 3:2}>
 
             <ParallaxLayer offset={0} speed={0}>
               <div className="cms-group-landing-section">
@@ -587,7 +560,7 @@ function Groups() {
             </ParallaxLayer>
 
             <ParallaxLayer offset={0.87} speed={0.8}>
-              <div className="cms-group-container">
+              {activeStudent?.isClassRep? <div className="cms-group-container">
               
               <div className="cms-group-menu-options">
               
@@ -597,7 +570,7 @@ function Groups() {
                 {
                   modules?.map((md)=>{
                     return (
-                      <option value={md?._id}>{md?.code}</option>
+                      <option key={md?._id} value={md?._id}>{md?.code}</option>
                     )
                   })
                 }
@@ -702,12 +675,12 @@ function Groups() {
 
             
 
-              </div>
+              </div>:<></>}
             </ParallaxLayer>
 
 
-            <ParallaxLayer offset={1.5} speed={0.5}>
-              <div className='cms-created-groups-container'>
+            <ParallaxLayer offset={activeStudent?.isClassRep? 1.5:0.9} speed={activeStudent?.isClassRep? 0.5:0.85}>
+              <div  className='cms-created-groups-container'>
                     <h2 className='cms-created-groups-title'>RECENTLY CREATED GROUPS</h2>
                     <br />
 

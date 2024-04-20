@@ -9,6 +9,7 @@ import {useDispatch} from 'react-redux';
 import {setActive} from '../../State/StudentsSlice'
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
+import {message} from 'antd';
 
 import {LocalLibrary,Abc, School, GroupWork} from '@mui/icons-material';
 
@@ -37,9 +38,12 @@ function SignIn() {
       localStorage.setItem('cms-user', JSON.stringify({studentId:data?._id}));
       dispatch(setActive(data));
       navigate('/');
+
+      message.success("sign in was successful");
      
     } catch (error) {
       console.log(error);
+      message.error("Oops! something went wrong, Please try again later");
       
     }finally{
       setIsLoading(false);
@@ -55,9 +59,6 @@ function SignIn() {
 
   return (
     <div className='signin-container'>
-
-     
-
 
       <div className="cms-signin-panel">
       <div className='sign-image-container'>

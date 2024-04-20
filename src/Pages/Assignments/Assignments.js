@@ -2,9 +2,8 @@ import React, {useState, useEffect} from 'react';
 import './Assignments.css';
 import axios from 'axios';
 import {appUrl} from '../../Helpers'
-import {Close, Brightness1, ArrowDropDown, ArrowDropUp, Add} from '@mui/icons-material';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import {Close, Brightness1, Add} from '@mui/icons-material';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { getModules } from '../../State/ModulesSlice';
 import SubNav from '../../Components/SubNav/SubNav';
@@ -13,8 +12,8 @@ function Assignments() {
 
     const dispatch = useDispatch();
     //modules
-  const foundModules = useSelector(state => state.modules.data);
-  const moduleStatus = useSelector(state => state.modules.status);
+    const foundModules = useSelector(state => state.modules.data);
+    const moduleStatus = useSelector(state => state.modules.status);
 
 
   //active user
@@ -58,12 +57,6 @@ function Assignments() {
 
     }
 
-    function handleEnlarge(){
-        setEnlarge(prev => !prev);
-    }
-
-
-
     async function createAssignment(e){
         e.preventDefault();
         console.log(newAssignment);
@@ -75,7 +68,7 @@ function Assignments() {
                    title:newAssignment.title, dueDate:newAssignment.dueDate,description:newAssignment.description}
                 });
                 const {data} = response;
-                console.log(data);
+               
             }
             
         } catch (error) {
@@ -134,16 +127,17 @@ function Assignments() {
 
                 <div className="cms-assign-tabs">
                     <h3 className='cms-assign-title'>Assignments</h3>
-                    <div onClick={handleShowAdd} className="cms-add-assign-btn cms-btn">
+                    {activeUser?.isClassRep && <div onClick={handleShowAdd} className="cms-add-assign-btn cms-btn">
                         {
                             showAdd? <Close className='cms-assign-add-icon' />:<Add className='cms-assign-add-icon' />
                         }
                         
-                    </div>
+                    </div>}
+                    
                 </div>
 
                 {
-                    showAdd?
+                    showAdd && activeUser?.isClassRep?
 
                     <form className='cms-form cms-assign-form'>
                         <select  value={newAssignment.moduleId} onChange={handleChange} className='cms-input-field cms-assign-field' name="moduleId" id="module">
@@ -170,9 +164,9 @@ function Assignments() {
 
                     assignments?.map((md)=>{
 
-                            return md?.assignments?.map((assign)=>{
+                            return md?.assignments?.map((assign, index)=>{
                                 return(
-                                    <div className="cms-today-cls cms-assign-cls">
+                                    <div key={index} className="cms-today-cls cms-assign-cls">
 
                                         <div className="cms--assignment-details-container">
                                             <p style={{fontSize:'.85rem'}}>{md?.code}</p>

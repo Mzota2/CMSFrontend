@@ -101,7 +101,7 @@
 }
 .cms-home-engineering-icon{
     color: white!important;
-    font-size: 2rem !important;
+    font-size: 1rem !important;
     order: 1;
 }
 
@@ -126,13 +126,18 @@
 
 /* Welcome engineer */
 .cms-home-welcome-engineer{
-    background-color: var(--dark-blue);
-    height: 10vh;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(44, 39, 92, 0.821);
+    height: 10;
+    width: 100vw;
     display: flex;
     align-items: center;
     gap: 1em;
     justify-content: center;
     color: white;
+    padding: 1em;
 }
 
 .cms-home-engineer-text{
@@ -140,7 +145,7 @@
 }
 
 .cms-home-engineering-icon{
-    font-size: 3rem !important;
+    font-size: 2rem !important;
 }
 
 /* Today's Classes */
@@ -157,7 +162,7 @@
 }
 
 .cms-home-section-button{
-    background-color: var(--light-blue);
+    background-color: var(--feint-blue);
     display: flex;
     align-items: center;
     gap: 1em;
@@ -169,7 +174,7 @@
     margin-left: auto;
     height: 50px;
     width: 50px;
-    background-color: var(--feint-blue);
+    background-color: var(--light-blue);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -180,10 +185,11 @@
 }
 .cms-home-section-title{
     font-size: 1.5rem;
-    color: rgb(255, 255, 255);
+    color: var(--dark-blue);
 }
 
 .cms-home-expand-icon{
+    color: white;
     font-size: 1.5rem !important;
 }
 
@@ -348,7 +354,7 @@
         display: none;
     }
 
-    .cms-home-today{
+    .cms-home-today, .cms-class-module{
         font-size: 0.85rem;
     }
     

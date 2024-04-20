@@ -16,7 +16,6 @@ function Exams() {
       //modules
     const foundModules = useSelector(state => state.modules.data);
     const moduleStatus = useSelector(state => state.modules.status);
-    const [todayModule, setTodayModule] = useState();
 
 
     //active user
@@ -73,24 +72,15 @@ function Exams() {
         })
     }
 
-    function handleEnlarge(){
-        setEnlarge(prev => !prev);
-    }
-
-
     async function createExam(e){
         e.preventDefault();
-        console.log(newExam);
 
         if(newExam?.title){
             const response = await axios.put(`${appUrl}module/${newExam?.title}`, {exams:{
                 date:newExam.date, time:newExam.time, description:newExam.description}
             });
             const {data} = response;
-            console.log(data);
         }
-
-    
     }
 
     useEffect(()=>{
@@ -108,7 +98,6 @@ function Exams() {
             const foundToday = foundModules?.filter((module)=>{
                 const isToday = module?.classDays?.find(cls => cls?.day === days[day]);
                 if(isToday){
-                    console.log(isToday);
                     return isToday;
                 }
             });
@@ -149,16 +138,16 @@ function Exams() {
             
             <div className="cms-assign-tabs">
                 <h3 className='cms-assign-title'>Exams</h3>
-                <div onClick={handleShowAdd} className="cms-add-assign-btn cms-btn">
+                {activeUser?.isClassRep && <div onClick={handleShowAdd} className="cms-add-assign-btn cms-btn">
                     {
                         showAdd? <Close className='cms-assign-add-icon' />:<Add className='cms-assign-add-icon' />
                     }
                     
-                </div>
+                </div>}
             </div>
 
             {
-                showAdd?
+                showAdd & activeUser?.isClassRep?
 
                 <form className='cms-form cms-assign-form'>
                     <select  value={newExam.title} onChange={handleChange} name="title" id="module" className='cms-input-field cms-assign-field'>

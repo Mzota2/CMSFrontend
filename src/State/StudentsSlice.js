@@ -6,7 +6,6 @@ export const getStudents = createAsyncThunk('students/getStudents', async()=>{
     try {
         const response = await axios.get(`${appUrl}student`);
         const {data} = response;
-        console.log(data);
         return data;
     } catch (error) {
         console.log(error);

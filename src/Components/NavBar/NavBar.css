@@ -131,6 +131,21 @@ header nav{
     cursor: pointer;
 }
 
+.profile-menu-icon-container{
+    margin-left: auto;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    padding: .3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--feint-blue);
+    cursor: pointer;
+}
+
+
 @media (max-width:1000px) {
     .desktop-nav{
         display: none;
@@ -198,7 +213,7 @@ header nav{
         background-color: red;
         color: white;
         position: absolute;
-        right: -5px;
+        right: -3px;
         top: -2px;
         display: flex;
         flex-direction: column;
@@ -237,19 +252,7 @@ header nav{
         border-bottom: 2px solid var(--light-blue);
     }
 
-    .profile-menu-icon-container{
-        margin-left: auto;
-        height: 30px;
-        width: 30px;
-        border-radius: 50%;
-        padding: .3em;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--feint-blue);
-    }
-
+    
     .profile-menu-icon-container:hover,
     .profile-menu-icon-container:focus{
         opacity: .6;

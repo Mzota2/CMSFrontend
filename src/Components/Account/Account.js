@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import './Account.css';
 import { AccountCircle , EditNote, Settings,GroupWork, Notifications, Group, Logout, Close, Edit, Engineering, Tag, Help, LightbulbCircle} from '@mui/icons-material';
-
+import {message} from 'antd'
 import { Link, useNavigate } from 'react-router-dom';
 
 
@@ -9,24 +9,22 @@ function Account({student, handleClose, show, handleShowAccount}) {
   const navigate = useNavigate();
   const menu = useRef(null);
 
-  function viewAssignments(){
-
-  }
-
-  function viewExams(){
-
-  }
+  const [logingOut, setLogingOut] = useState(false);
 
   function handleClickMenu(e){
     if(!menu?.current){
-      console.log("working");
-      console.log(menu.current);
       handleClose();
     }
+  }
 
-    else{
-      console.log("not working")
-    }
+  function logout(){
+    setLogingOut(true);
+    setTimeout(()=>{
+      localStorage.removeItem('cms-user');
+      navigate('/signin');
+      message.success("Loged out successfully");
+    }, 2000);
+   
   }
 
   useEffect(()=>{
@@ -45,8 +43,11 @@ function Account({student, handleClose, show, handleShowAccount}) {
 
   return (
     <div ref={menu}  style={{animationName:`${show? 'slideInA':'slideOutA'}`}}  className='cms-account-container'>
-
+    
       <div className="cms-account-user-info-container">
+        <div  onClick={handleShowAccount} className="profile-menu-icon-container cms-account-profile-menu-icon">
+              {show && <Close className='cms-menu-icon'/>}
+        </div>
 
         <div className="cms-account-student-container">
           <div className="cms-engineer-icon-container">
@@ -64,7 +65,7 @@ function Account({student, handleClose, show, handleShowAccount}) {
           <p>Your shortcuts</p>
         </div>
         
-        <hr className='hr' />
+        <hr className='hrb' />
 
         <div className="cms-account-student-important-container">
 
@@ -90,7 +91,7 @@ function Account({student, handleClose, show, handleShowAccount}) {
 
         </div>
 
-        <hr className='hr' />
+        <hr className='hrb' />
 
 
         <div className="cms-account-student-additional-container">
@@ -110,7 +111,7 @@ function Account({student, handleClose, show, handleShowAccount}) {
               <p className='cms-account-important-title'>Settings</p>
           </div>
 
-          <div className="cms-account-student-additional">
+          <div onClick={logout} className="cms-account-student-additional">
               <Logout className='cms-account-icon'/>
               <p className='cms-account-important-title'>Logout</p>
           </div>

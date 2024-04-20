@@ -19,10 +19,13 @@
 .cms-class-module{
     display: flex;
     align-items: center;
+    position: relative;
+    padding: 1em;
+    background-color: white;
+    color: black;
+    cursor: pointer;
     gap: 1em;
 }
-
-
 
 /*  */
 .cms-module-dy{
@@ -72,6 +75,33 @@
     justify-content: center;
 }
 /*  */
+
+.cms-module-expand-container{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--feint-blue);
+    align-items: center;
+    justify-content: center;
+}
+
+.cms-expand-icon{
+    color: var(--light-blue);
+}
+
+.cms-module-expand-container:hover,
+.cms-module-expand-container:focus{
+    background-color: var(--light-blue);
+    transition: .5s ease;
+}
+
+.cms-module-expand-container:hover .cms-expand-icon,
+.cms-module-expand-container:focus .cms-expand-icon{
+    color: white;
+    transition: .5s ease;
+}
 
 @media (max-width:650px) {
     

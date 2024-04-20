@@ -8,12 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModules } from '../../State/StudentsSlice';
 import { getModules } from '../../State/ModulesSlice';
 import Loader from '../../Components/Loader/Loader';
-import {useNavigate} from 'react-router-dom';
-import {getAnnouncements} from '../../State/AnnouncementsSlice';
 import robotImage from '../../Assets/robot.jpg';
 import engineeringGirl from '../../Assets/engineeringGirls.jpg';
+import { getPrograms } from '../../State/ProgramsSlice';
 
-import {Engineering, ExpandMore, ExpandLess, Check, Clear, Visibility} from '@mui/icons-material'
+import {Engineering, ExpandMore, ExpandLess, Check, Clear} from '@mui/icons-material'
 
 function Home() {
 
@@ -23,7 +22,6 @@ function Home() {
     const [showEvents, setShowEvents] = useState(true);
     const [showToday, setShowToday] = useState(true);
 
-    const navigate = useNavigate();
     //
     const [isLoading, setIsLoading] = useState(false);
 
@@ -31,11 +29,12 @@ function Home() {
     const days = ['Sunday,Monday, Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const date = new Date();
     const [ today, setToday]= useState();
-    const isMorning = date.getHours() < 12?true:false
-    const isAfternoon = date.getHours() > 12 && date.getHours()< 18? true:false;
-    const isEvening = date.getHours() > 18? true:false;
-    const isWeekend = date.getDay() === 6 || date.getDay() === 0 ?true:false;
     
+     //programs status
+     const foundPrograms = useSelector(state => state.programs.data);
+     const programsStatus = useSelector(state => state.programs.status);
+     const [program, setProgram] = React.useState();
+
     //floating action bt
    
     //modules
@@ -53,17 +52,11 @@ function Home() {
     const dispatch = useDispatch();
 
     const [modules, setModules] = useState();
-    const imagePaths = [image1, image2, image3];
  
     //active user
     const activeUser = useSelector(state => state.students.activeUser);
 
-    //announcements
-    const foundAnnouncements = useSelector(state => state.announcements.data);
-    const announcementsStatus = useSelector(state => state.announcements.status);
-    const [announcements, setAnnouncements] = useState([]);
-
-
+   
     //collapse section
     
     function handleDisplayProjects(){
@@ -105,6 +98,14 @@ function Home() {
 
     React.useEffect(()=>{
 
+        if(programsStatus === 'idle'){
+          dispatch(getPrograms());
+        }
+        else if(programsStatus !== 'idle' ){
+          const userProgram = foundPrograms?.find((program)=> program._id === activeUser?.program);
+          setProgram(userProgram);
+        }
+
         if(moduleStatus === 'idle'){
             setIsLoading(true)
             dispatch(getModules());
@@ -119,7 +120,6 @@ function Home() {
             const foundToday = foundModules?.filter((module)=>{
                 const isToday = module?.classDays?.find(cls => cls?.day === days[day]);
                 if(isToday){
-                    console.log(isToday);
                     return isToday;
                 }
             });
@@ -142,50 +142,38 @@ function Home() {
                 const existingModule = foundModules?.find(md => md._id === myModule);
                 if(existingModule){
                   return existingModule;
-    
                 }
                
               })?.filter((md)=> md); //check if its defined
               
              setActiveModules(myModules);
-        }
+             }
         
-        if(activeUser){
+            if(activeUser){
 
-            //dispatch everything that belongs to the user
-            const myModules = foundModules?.filter((md)=>{
-                return activeUser?.modules?.find(activeMd => activeMd === md?._id);
-              })
-              setModules(myModules);
-          
-            dispatch(setActiveModules(myModules))
-            
-        }
+                //dispatch everything that belongs to the user
+                const myModules = foundModules?.filter((md)=>{
+                    return activeUser?.modules?.find(activeMd => activeMd === md?._id);
+                  })
+                  setModules(myModules);
+              
+                dispatch(setActiveModules(myModules))
+                
+            }
 
-        if(announcementsStatus === 'idle'){
-            dispatch(getAnnouncements());
-        }
+            setToday(days[date.getDay()]);
 
-        else if(announcementsStatus !== 'idle'){
-            setAnnouncements(foundAnnouncements);
-            console.log(announcements);
 
-        }
 
-        setToday(days[date.getDay()]);
-
-       
-
-    }, [index, dispatch,moduleStatus, foundModules, announcementsStatus, foundAnnouncements]);
+    }, [index, dispatch,moduleStatus, foundModules, foundPrograms, programsStatus]);
 
 
     useEffect(()=>{
-      console.log(homeAnimeIndex);
       handleAnimation();
     }, [homeAnimeIndex])
 
     if(isLoading){
-        return <Loader/>
+        return <Loader show={!isLoading}/>
     }
 
   return (
@@ -202,12 +190,6 @@ function Home() {
             <div className="cms-home-text-container">
               <div className="cms-engineering-mindset">
                 <h1 className='cms-home-message'>THE ENGINEERING MINDSET</h1>
-
-                <div className="cms-home-engineering-icon-container">
-                  <Engineering className='cms-home-engineering-icon' />
-                </div>
-               
-      
               </div>
               
               <p className='cms-home-message-quote'>“I have not failed, but found 1000 ways to not make a light bulb.”</p>
@@ -223,10 +205,7 @@ function Home() {
 
             <div className="cms-home-text-container">
               <div className="cms-engineering-mindset">
-                <h1 className='cms-home-message'>THE INNOVATIVE MINDSET</h1>
-                <div className="cms-home-engineering-icon-container">
-                  <Engineering className='cms-home-engineering-icon' />
-                </div>
+                <h1 className='cms-home-message'>CREATIVITY & INNOVATION</h1>
       
               </div>
               
@@ -244,10 +223,7 @@ function Home() {
             <div className="cms-home-text-container">
               <div className="cms-engineering-mindset">
                 <h1 className='cms-home-message'>HUMANITARIAN IMPACT</h1>
-                <div className="cms-home-engineering-icon-container">
-                  <Engineering className='cms-home-engineering-icon' />
-                </div>
-      
+               
               </div>
               
               <p className='cms-home-message-quote'>“Life’s most persistent and urgent question is, ‘What are you doing for others?’”</p>
@@ -262,7 +238,15 @@ function Home() {
 
         <div className="cms-home-welcome-engineer">
           <Engineering className='cms-home-engineering-icon' />
-          <h2 className='cms-home-engineer-text'>Computer Engineer</h2>
+          <h4 className='cms-home-engineer-text'>
+            {
+            program?.code === 'BECE'?'Computer Engineer':
+            program?.code === 'BETE'? 'Telecommunication Engineer':
+            program?.code === 'BBME'? 'Biomedical Engineer':
+            program?.code === 'BEEE'? 'Electrical Engineer':''
+            }
+          
+          </h4>
         </div>
 
         <div className="cms-home-todays-classes-container cms-home-section">
@@ -348,9 +332,9 @@ function Home() {
 
           {showProjects && <div className="cms-projects-innovations">
             {
-              [1,2,3, 4,5,6].map((project)=>{
+              [1,2,3, 4,5,6].map((project, index)=>{
                 return(
-                  <div className="cms-home-project">
+                  <div key={index} className="cms-home-project">
 
                     <div className="cms-project-image-container">
                       <img src={robotImage} className='cms-project-image' alt="robot" />
@@ -389,9 +373,9 @@ function Home() {
         {
             showEvents && <div className="cms-projects-innovations">
           {
-            [1,2,3,4,5,6].map((project)=>{
+            [1,2,3,4,5,6].map((project, index)=>{
               return(
-                <div className="cms-home-project">
+                <div key={index} className="cms-home-project">
 
                   <div className="cms-project-image-container">
                     <img src={engineeringGirl} className='cms-project-image' alt="robot" />

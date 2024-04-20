@@ -11,6 +11,11 @@
     align-items: center;
     justify-content: center;
     transition: .5s ease;
+    opacity: 1;
+}
+.cms-load{
+    transition: .5s ease ;
+    opacity: 0;
 }
 
 .loader{

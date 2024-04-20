@@ -37,7 +37,6 @@ function Classes() {
 
 
   function handleActiveTab(e){
-
     const days = ['Sunday', 'Monday', 'Tuesday','Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const date = new Date();
     const day = date.getDay();
@@ -45,8 +44,8 @@ function Classes() {
     if(e.target.innerText === 'Active'){
       const activeModules = foundModules?.filter((md)=>{
         const isDay = md?.classDays?.find((dy)=> dy.day === days[day]);
-        const isOn = md?.classDays?.find((dy)=> dy.isCancelled === false);
-        return isDay && isOn;
+        const isOff = md?.classDays?.find((dy)=> dy.isCancelled === true);
+        return isDay && !isOff;
       });
 
       setModules(activeModules);
@@ -55,13 +54,11 @@ function Classes() {
     else if(e.target.innerText === 'Cancelled'){
       const cancelledModules = foundModules?.filter((md)=>{
         const isDay = md?.classDays?.find((dy)=> dy.day === days[day]);
-        const isOn = md?.classDays?.find((dy)=> dy.isCancelled === false);
-        return isDay && !isOn;
+        const isOff = md?.classDays?.find((dy)=> dy.isCancelled === true);
+        return isDay && isOff;
       });
 
       setModules(cancelledModules);
-
-
     }
 
     else if(e.target.innerText === 'All'){
@@ -73,17 +70,16 @@ function Classes() {
   }
 
   function handleSelectModule(id){
-    console.log('clicked');
     setDisplayActiveModule(prev => !prev);
     const selectedModule = modules?.find((md)=> md?._id === id);
     setActiveModule(selectedModule);
+    
   }
 
   async function updateStudentModule(id, module){
     try {
       const response = await axios.put(`${appUrl}module/${id}`, {...module});
       const {data} = response;
-      console.log(data);
       dispatch(getModules());
       
     } catch (error) {
@@ -93,8 +89,6 @@ function Classes() {
 
   async function setClassOnOff(id, bool){
     let selectedModule = modules?.find((md)=> md?._id === id);
-    console.log('this is the module');
-    console.log(selectedModule);
     setActiveModule(selectedModule);
 
     //set active module above
@@ -103,12 +97,9 @@ function Classes() {
     const day = date.getDay();
     const today = days[day];
 
-    console.log(today);
-
     let updateModule = selectedModule?.classDays?.find((dy)=> dy.day === today);
-
-    console.log(updateModule);
     const result = {...updateModule};
+
     if(updateModule){
       result.isCancelled = !bool;
       const index = selectedModule?.classDays?.indexOf(updateModule);
@@ -117,13 +108,10 @@ function Classes() {
       moduleClassDays[index] = result;
 
       const module = {...selectedModule, classDays:moduleClassDays};
-      console.log(module);
 
       updateStudentModule(id, module); //updated class module
     }
-  
     //updateModules(id, selectedModule);
-    
 
   }
 
@@ -190,30 +178,29 @@ function Classes() {
             const day = date.getDay();
             const today = days[day];
   
-            const isDay = mod?.classDays?.find((dy)=> dy.day == today);
-            const isOn = mod?.classDays?.find((dy)=> dy.isCancelled === false);
+            const isDay = mod?.classDays?.find((dy)=> dy.day === today);
+            const isOff = mod?.classDays?.find((dy)=> dy.isCancelled === true);
 
             return(
-              <div className='cms-class-module cms-home-today' key={mod?._id} >
+              <div className='cms-class-module' key={mod?._id} >
 
                       <p className='cms-today-name'>{mod?.name}</p>
                       <p className='cms-today-code'>{mod?.code}</p>
                       <p className='cms-today-lecturer'>{mod?.lecturer}</p>
                  
-                 <div className="cms-module-status-container">
-                  {isDay && isOn?
-                  <i className="fas fa-toggle-on m-status m-status-on" onClick={()=>{setClassOnOff(mod?._id, false)}} ></i>:
-                   isDay && !isOn?
-                  <i className="fas fa-toggle-off m-status  m-status-off" onClick={()=>{setClassOnOff(mod?._id, true)}}></i>:<></>
-                  
-                }
-                  
-        
-                 </div>
+                {activeUser?.isClassRep &&<div className="cms-module-status-container">
+                {isDay && !isOff?
+                <i className="fas fa-toggle-on m-status m-status-on" onClick={()=>{setClassOnOff(mod?._id, false)}} ></i>:
+                  isDay && isOff?
+                <i className="fas fa-toggle-off m-status  m-status-off" onClick={()=>{setClassOnOff(mod?._id, true)}}></i>:<></>
+                
+              }
+                
+                </div>}
 
-                 <div onClick={()=>{handleSelectModule(mod?._id)}} className="cms-module-expand-container">
+                 <div style={{marginLeft:'auto'}} onClick={()=>{handleSelectModule(mod?._id)}} className="cms-module-expand-container">
                   {
-                    displayActiveModule? <ExpandMore/>: <ExpandLess/>
+                    displayActiveModule? <ExpandMore className='cms-expand-icon'/>: <ExpandLess className='cms-expand-icon'/>
                   }
                  </div>
 

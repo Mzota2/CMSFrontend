@@ -65,7 +65,7 @@ function App() {
           <Route path="/classes" element={<Classes/>}/>
           
         </Route>
-        {/* <Route path="/settings" element={<Settings/>} /> */}
+        <Route path="/settings" element={<Settings/>} />
         <Route path='/groups' element={<Groups/>} />
         <Route path='/announcements' element={<Announcement/>} />
         <Route path="/exams" element={<Exams/>}/>
