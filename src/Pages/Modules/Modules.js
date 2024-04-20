@@ -13,6 +13,7 @@ import {Add, Close, Remove, RemoveCircleOutline, AddCircleOutline} from '@mui/ic
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import moduleBackgroundImage from '../../Assets/modules.jpg';
 import ModuleMenu from '../../Components/ModuleMenu/ModuleMenu';
+import { message } from 'antd';
 
 function Modules() {
   //active tab
@@ -221,7 +222,7 @@ function Modules() {
      
 
       handleAdd(data?._id); //added created module to my modules
-
+      message.success('Successfully added a new module');
     } catch (error) {
       console.log(error);
     }
@@ -298,8 +299,10 @@ function Modules() {
     
 
   }
-  function handleSubmit(values,action){
+  function handleSubmit(values,{resetForm}){
     createModule(values);
+    resetForm();
+
   }
 
 

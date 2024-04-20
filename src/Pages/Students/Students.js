@@ -13,6 +13,7 @@ import studentAnime from '../../Assets/studentanime.mp4'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Loader from '../../Components/Loader/Loader';
+import { message } from 'antd';
 
 function Students() {
     const [displayAdd, setDisplayAdd] = React.useState(false);
@@ -94,12 +95,11 @@ function Students() {
 
     async function addStudent(student){
         try {
-
-            console.log(student);
             setIsLoading(true);
             const response = await axios.post(`${appUrl}student`, student);
             const {data} = response;
-            console.log(data);
+
+            message.success('Successfully added a student');
             
         } catch (error) {
             console.log(error);
@@ -138,10 +138,10 @@ function Students() {
     }
     
 
-    function handleSubmit(values, actions){
-        console.log(values);
+    function handleSubmit(values, {resetForm}){
+        
         addStudent(values);
-
+        resetForm();
        // handleDisplayAdd();
     }
 
