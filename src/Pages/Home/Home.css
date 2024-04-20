@@ -127,17 +127,16 @@
 /* Welcome engineer */
 .cms-home-welcome-engineer{
     position: absolute;
-    bottom: 0;
+    bottom: 0%;
     right: 0;
     background-color: rgba(44, 39, 92, 0.821);
-    height: 10;
+    height: 8vh;
     width: 100vw;
     display: flex;
     align-items: center;
     gap: 1em;
     justify-content: center;
     color: white;
-    padding: 1em;
 }
 
 .cms-home-engineer-text{
