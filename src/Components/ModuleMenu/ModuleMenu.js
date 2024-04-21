@@ -4,10 +4,8 @@ import {Add, Close, Remove, Edit, Delete, RemoveCircleOutline, AddCircleOutline}
 
 function ModuleMenu({handleAdd, display,handleDisplay, handleRemove, handleDelete, handleEdit, isFound}) {
  
-    function handleDisplayOptions(){
-        // if(display=== true){
-        //     handleDisplay();
-        // }
+    function handleDisplayOptions(e){
+        // handleDisplay();
     }
     useEffect(()=>{
         document.addEventListener('click', ()=>{
@@ -21,9 +19,9 @@ function ModuleMenu({handleAdd, display,handleDisplay, handleRemove, handleDelet
         }
     }, [])
     return (
-    <div onClick={handleDisplay} className='cms-module-menu'>
+    <div onMouseLeave={handleDisplay} className='cms-module-menu'>
         <div className='cms-module-menu-options'>
-           {isFound?<div onClick={handleAdd} className="cms-module-option-container">
+           {!isFound?<div onClick={handleAdd} className="cms-module-option-container">
                 <p className="cms-module-option">Add</p>
                
             </div>:
@@ -36,8 +34,6 @@ function ModuleMenu({handleAdd, display,handleDisplay, handleRemove, handleDelet
 
             <div onClick={handleEdit} className="cms-module-option-container">
                 <p className="cms-module-option">Edit</p>
-               
-                
             </div>
 
             

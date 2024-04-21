@@ -109,7 +109,9 @@ async function verifyPWD(user){
       
     }
 
-  }, [foundUser, password, confirmPassword])
+  }, [foundUser, password, confirmPassword]);
+
+  
   return (
     <div className='cms-settings-container'>
 

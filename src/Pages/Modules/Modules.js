@@ -182,10 +182,12 @@ function Modules() {
   //deleting a module
   async function deleteModule(id){
     try {
+      const selectedModule = modules?.find((md)=> md?._id === id);
 
       const response = await axios.delete(`${appUrl}module/${id}`);
       const {data} = response;
       console.log(data);
+
 
       //remove in my modules
 
@@ -199,7 +201,9 @@ function Modules() {
           updateStudent(student?._id, currentStudent);
 
         }
-      })
+      });
+
+      message.success(`Deleted ${selectedModule?.name}`);
 
       
     } catch (error) {
@@ -220,9 +224,9 @@ function Modules() {
       const response = await axios.post(`${appUrl}module`, {...module, classDays:moduleDays});
       const {data} = response;
      
+      handleAdd(data?._id, module); //added created module to my modules
+      message.success(`Successfully added ${module?.name}`);
 
-      handleAdd(data?._id); //added created module to my modules
-      message.success('Successfully added a new module');
     } catch (error) {
       console.log(error);
     }
@@ -236,13 +240,15 @@ function Modules() {
 
     try {
       const studentModules =user?.modules?user?.modules.concat(id):[id];
+      const selectedModule = modules?.find((md)=> md?._id === id);
 
-      console.log(studentModules);
       const response = await axios.put(`${appUrl}student/${user?._id}`, {...user, modules:studentModules});
       const {data} = response;
       //console.log(data);
       localStorage.setItem('cms-user', JSON.stringify(data));
       dispatch(setActive(data));
+
+      message.success(`Enrolled in ${selectedModule?.name}`)
       
     } catch (error) {
       
@@ -252,10 +258,14 @@ function Modules() {
   async function handleLeave(id){
     try {
       const studentModules = user?.modules?.filter((md)=> md !== id);
+      const selectedModule = modules?.find((md)=> md?._id === id);
+
       const response = await axios.put(`${appUrl}student/${user?._id}`, {...user, modules:studentModules});
       const {data} = response;
       localStorage.setItem('cms-user', JSON.stringify(data));
       dispatch(setActive(data));
+
+      message.success(`Left ${selectedModule?.name}`)
       
     } catch (error) {
       console.log(error);
@@ -263,16 +273,17 @@ function Modules() {
 
   }
 
-  async function handleAdd(id){
+  async function handleAdd(id, module){
     try {
 
       const selectedModule = modules?.find((md)=> md?._id === id);
       const modulePrograms = selectedModule?.programsId? selectedModule.programsId?.concat(user?.program):[user?.program];
 
-      console.log(modulePrograms);
       const response = await axios.put(`${appUrl}module/${id}`, {...selectedModule, programsId:modulePrograms});
       const {data} = response;
       dispatch(getModules()); //get updated modules list
+
+      message.success(`Added ${module?.name} to ${program?.code}`)
 
       
     } catch (error) {
@@ -284,13 +295,19 @@ function Modules() {
     try {
       const selectedModule = modules?.find((md)=> md?._id === id);
       const modulePrograms = selectedModule?.programsId?.filter((pg)=> pg !== user?.program);
+      
       console.log(modulePrograms);
       const response = await axios.put(`${appUrl}module/${id}`, {...selectedModule, programsId:modulePrograms});
       const {data} = response;
 
+      message.success(`Removed ${selectedModule?.name} from ${program?.code}`)
+
+      //remove modules in the array
+
       //remaining modules
 
       dispatch(getModules()); //get updated modules list
+  
     
       
     } catch (error) {
@@ -739,7 +756,7 @@ function Modules() {
               isViewDepartment?
               modules?.map((module)=>{
                 const isFound = module?.programsId?.find(id => id === user?.program);
-                console.log(isFound);
+  
     
                 // const {name, code, lecturer} = module;
                 return(

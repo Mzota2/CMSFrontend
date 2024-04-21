@@ -179,6 +179,7 @@ function Students() {
             const {data} = response;
             const studentsNow = students?.filter((student)=> student._id !== studentId);
             setStudents(studentsNow);
+            message.success('Deleted student account');
 
         } catch (error) {
             console.log(error);
@@ -193,6 +194,7 @@ function Students() {
             setIsLoading(true);
             const response = await axios.put(`${appUrl}student/${studentId}`, {username:student.username, regNO:student.regNO, email:student.email, isClassRep:student.isClassRep});
             const {data} = response;
+            message.success('Successfully updated student account');
             
         } catch (error) {
             console.log(error);

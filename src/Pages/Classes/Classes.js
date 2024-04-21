@@ -12,6 +12,7 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Loader from '../../Components/Loader/Loader';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { message } from 'antd';
 
 function Classes() {
 
@@ -76,11 +77,12 @@ function Classes() {
     
   }
 
-  async function updateStudentModule(id, module){
+  async function updateStudentModule(id, module, bool){
     try {
       const response = await axios.put(`${appUrl}module/${id}`, {...module});
       const {data} = response;
       dispatch(getModules());
+      message.success(`${module?.name} is ${bool?' on': 'off'}`)
       
     } catch (error) {
       console.log(error);
@@ -109,7 +111,8 @@ function Classes() {
 
       const module = {...selectedModule, classDays:moduleClassDays};
 
-      updateStudentModule(id, module); //updated class module
+      updateStudentModule(id, module, result?.isCancelled); //updated class module
+      
     }
     //updateModules(id, selectedModule);
 
@@ -130,8 +133,6 @@ function Classes() {
     }
 
   }, [dispatch, foundModules, modulesStatus, activeUser]);
-
-
 
   if(modulesStatus === 'idle'){
     return <Loader/>
