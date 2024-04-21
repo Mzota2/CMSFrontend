@@ -50,7 +50,7 @@ function Account({student, handleClose, show, handleShowAccount}) {
         </div>
 
         <div className="cms-account-student-container">
-          <div className="cms-engineer-icon-container">
+          <div onClick={()=>{navigate('/settings')}} className="cms-engineer-icon-container">
             <Engineering className='cms-account-engineer-icon'/>
           </div>
 

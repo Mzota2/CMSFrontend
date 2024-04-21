@@ -35,6 +35,7 @@ function Settings() {
   }
 
   function handleChange(e){
+  
     setUser(prev => {
       return {
         ...prev,
@@ -45,10 +46,12 @@ function Settings() {
 
   async function updateUser (){
     try {
+      console.log(user);
       const response = await axios.put(`${appUrl}student/${user?._id}`, {...user, username:user?.username, regNO:user?.regNO});
       const {data} = response;
+      console.log(data);
       setUser(data);
-      window.alert("Updated user successfully");
+      message.success("Updated user successfully");
     } catch (error) {
       console.log(error);
     }
