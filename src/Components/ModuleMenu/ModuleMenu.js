@@ -19,7 +19,7 @@ function ModuleMenu({handleAdd, display,handleDisplay, handleRemove, handleDelet
         }
     }, [])
     return (
-    <div onMouseLeave={handleDisplay} onTouchMove={handleDisplay} className='cms-module-menu'>
+    <div onMouseLeave={handleDisplay} onClick={handleDisplay} className='cms-module-menu'>
         <div className='cms-module-menu-options'>
            {!isFound?<div onClick={handleAdd} className="cms-module-option-container">
                 <p className="cms-module-option">Add</p>
