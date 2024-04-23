@@ -89,7 +89,7 @@ function Home() {
           setHomeAnimeIndex(0);
         }
         
-      }, 60000)
+      }, 30000)
     }
 
     function handleSelectModule(id){
