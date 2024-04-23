@@ -295,8 +295,7 @@ function Modules() {
     try {
       const selectedModule = modules?.find((md)=> md?._id === id);
       const modulePrograms = selectedModule?.programsId?.filter((pg)=> pg !== user?.program);
-      
-      console.log(modulePrograms);
+    
       const response = await axios.put(`${appUrl}module/${id}`, {...selectedModule, programsId:modulePrograms});
       const {data} = response;
 
@@ -771,7 +770,7 @@ function Modules() {
                       </div>
 
 
-                      {displayModuleOptions && selectedModule===module?._id?<ModuleMenu display={displayModuleOptions} handleDisplay={handleDisplayModuleOptions} isFound={isFound} handleEdit={()=>{handleDisplayEditModule(module?._id)}} handleRemove={()=>{handleRemove(module?._id)}} handleAdd={()=>{handleAdd(module?._id)}} handleDelete={()=>{deleteModule(module?._id)}} />:<></>}
+                      {displayModuleOptions && selectedModule===module?._id?<ModuleMenu display={displayModuleOptions} handleDisplay={handleDisplayModuleOptions} isFound={isFound} handleEdit={()=>{handleDisplayEditModule(module?._id)}} handleRemove={()=>{handleRemove(module?._id)}} handleAdd={()=>{handleAdd(module?._id, module)}} handleDelete={()=>{deleteModule(module?._id)}} />:<></>}
 
                       {/* <div className="cms-class-module-controllers">
                         {

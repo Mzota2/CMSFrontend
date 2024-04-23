@@ -26,9 +26,12 @@ function Home() {
     const [isLoading, setIsLoading] = useState(false);
 
     //date and time
-    const days = ['Sunday,Monday, Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const days = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const date = new Date();
-    const [ today, setToday]= useState();
+    const day = date.getDay();
+  
+    const today = days[day];
+    const [ todate, setTodate]= useState(today);
     
      //programs status
      const foundPrograms = useSelector(state => state.programs.data);
@@ -113,12 +116,12 @@ function Home() {
 
         else if((moduleStatus !== 'idle') && activeUser){
             setIsLoading(false);
-            const days = ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const date = new Date();
-            const day = date.getDay();
+            // const days = ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            // const date = new Date();
+            // const day = date.getDay();
            
             const foundToday = foundModules?.filter((module)=>{
-                const isToday = module?.classDays?.find(cls => cls?.day === days[day]);
+                const isToday = module?.classDays?.find(cls => cls?.day === todate);
                 if(isToday){
                     return isToday;
                 }
@@ -161,11 +164,8 @@ function Home() {
                 
             }
 
-            setToday(days[date.getDay()]);
 
-
-
-    }, [index, dispatch,moduleStatus, foundModules, foundPrograms, programsStatus]);
+    }, [index, dispatch,moduleStatus, foundModules, foundPrograms, programsStatus, todate]);
 
 
     useEffect(()=>{
@@ -249,8 +249,6 @@ function Home() {
 
         </div>
 
-        
-
         <div className="cms-home-todays-classes-container cms-home-section">
 
           <div className="cms-home-section-button">
@@ -267,9 +265,15 @@ function Home() {
             {
               todayModule?.map((md)=>{
 
-                console.log(md);
+      
+                // const date = new Date();
+                // const day = date.getDay();
+                // const today = days[day];
 
-                const isActive = !md?.isCancelled;
+                const isActive= md?.classDays?.find((cls)=> (cls?.day === 'Tuesday') && (cls?.isCancelled === false));
+                // console.log(foundClass);
+                // console.log(md);
+
                 return(
                   <div key={md?._id} className="cms-home-today" onClick={()=>{handleSelectModule(md?._id)}}>
 
@@ -278,8 +282,9 @@ function Home() {
                       <p className='cms-today-code'>{md?.code}</p>
                       <p className='cms-today-lecturer'>{md?.lecturer}</p>
 
+                    
                       <div style={{backgroundColor:`${isActive?'green':'red'}`}} className="cms-today-isActive">
-                          {isActive ? <Check/>:<Clear/>}
+                          {isActive? <Check/>:<Clear/>}
                       </div>
                     </div>
 
@@ -314,9 +319,6 @@ function Home() {
               })
             }
           </div>}
-
-       
-
         </div>
 
        <div className="cms-home-projects-innovations-container cms-home-section">
@@ -360,7 +362,6 @@ function Home() {
             }
           </div>}
         </div>
-        
         
        <div className="cms-home-events-activities-container cms-home-section">
             <div className="cms-home-section-button">

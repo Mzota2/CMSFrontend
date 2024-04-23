@@ -44,9 +44,8 @@ function Classes() {
 
     if(e.target.innerText === 'Active'){
       const activeModules = foundModules?.filter((md)=>{
-        const isDay = md?.classDays?.find((dy)=> dy.day === days[day]);
-        const isOff = md?.classDays?.find((dy)=> dy.isCancelled === true);
-        return isDay && !isOff;
+        const isActive = md?.classDays?.find((dy)=> (dy.day === days[day]) && (dy.isCancelled === false));
+        return isActive;
       });
 
       setModules(activeModules);
@@ -54,9 +53,8 @@ function Classes() {
 
     else if(e.target.innerText === 'Cancelled'){
       const cancelledModules = foundModules?.filter((md)=>{
-        const isDay = md?.classDays?.find((dy)=> dy.day === days[day]);
-        const isOff = md?.classDays?.find((dy)=> dy.isCancelled === true);
-        return isDay && isOff;
+        const isCancelled = md?.classDays?.find((dy)=> (dy.day === days[day]) && (dy.isCancelled === true));
+        return isCancelled;
       });
 
       setModules(cancelledModules);
@@ -103,7 +101,9 @@ function Classes() {
     const result = {...updateModule};
 
     if(updateModule){
+      console.log(result?.isCancelled);
       result.isCancelled = !bool;
+      console.log(result?.isCancelled);
       const index = selectedModule?.classDays?.indexOf(updateModule);
 
       const moduleClassDays = [...selectedModule?.classDays];
@@ -111,7 +111,9 @@ function Classes() {
 
       const module = {...selectedModule, classDays:moduleClassDays};
 
-      updateStudentModule(id, module, result?.isCancelled); //updated class module
+      console.log(module);
+
+      updateStudentModule(id, module, bool); //updated class module
       
     }
     //updateModules(id, selectedModule);
