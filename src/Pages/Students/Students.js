@@ -135,6 +135,15 @@ function Students() {
                 ...programStudents
             ]
         })
+
+        setStudentsPage(prev  =>{
+            return {
+                ...prev,
+                page:1,
+                startIndex:0,
+                endIndex:9
+            }
+        })
     }
     
 

@@ -307,7 +307,6 @@ function Modules() {
 
       dispatch(getModules()); //get updated modules list
   
-    
       
     } catch (error) {
       console.log(error);
