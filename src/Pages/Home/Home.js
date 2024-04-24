@@ -270,7 +270,7 @@ function Home() {
                 // const day = date.getDay();
                 // const today = days[day];
 
-                const isActive= md?.classDays?.find((cls)=> (cls?.day === 'Tuesday') && (cls?.isCancelled === false));
+                const isActive= md?.classDays?.find((cls)=> (cls?.day === todate) && (cls?.isCancelled === false));
                 // console.log(foundClass);
                 // console.log(md);
 
