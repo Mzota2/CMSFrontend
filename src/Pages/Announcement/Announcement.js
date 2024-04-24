@@ -140,7 +140,7 @@ function Announcement() {
                         <div className="cms-announcement-details">
                             <h4>{anno?.agenda}</h4>
                             <p>{anno?.date}</p>
-                            <p>{anno?.time}</p>
+                            {/* <p>{anno?.time}</p> */}
                         </div>
 
                         <div className="cms-announcement-description">
