@@ -65,6 +65,20 @@
     color: green;
 }
 
+.cms-class-pending-icon{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    border: 2px dashed green;
+}
+
+.cms-class-completed-icon{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: var(--dark-blue);
+}
+
 .cms-class-off-icon{
     color: rgba(255, 0, 0, 0.477);
 }
@@ -85,6 +99,7 @@
     background-color: var(--feint-blue);
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .cms-expand-icon{
@@ -104,5 +119,16 @@
 }
 
 @media (max-width:650px) {
-    
+    .class-module-tabs-container{
+        width: 100%;
+        overflow-x: auto;
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+
+    .class-module-tab{
+        padding-left: 1em;
+        padding-right: 1em;
+        
+    }
 }

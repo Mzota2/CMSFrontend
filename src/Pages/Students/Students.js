@@ -9,13 +9,38 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getStudents} from '../../State/StudentsSlice';
 import {CircularProgress} from '@mui/material'
 import { getPrograms } from '../../State/ProgramsSlice';
-import studentAnime from '../../Assets/studentanime.mp4'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Loader from '../../Components/Loader/Loader';
 import { message } from 'antd';
+import MiniLoader from '../../Components/MiniLoader/MiniLoader';
+import DialogBox from '../../Components/DialogBox/DialogBox';
+import {animated, useSpring} from '@react-spring/web';
+import studentsBackgroundImage from '../../Assets/students.jpg';
+
+
+function StudentBox({slideLeft, student, activeUser, handleShowDeleteDialog, handleDisplayEdit}) {
+  return (
+        <animated.div style={{...slideLeft}}  key={student._id} className='class-student'>
+            <div className="class-student-profile">
+                <AccountCircle className='student-profile-icon other-student-icon'/>
+                <p>{student?.username}</p>
+                <p>{student?.regNO}</p>
+            </div>
+
+            { activeUser?.isClassRep && <div className="student-manage">
+                <button onClick={()=> handleDisplayEdit(student._id)} className='student-manage-btn student-edit-btn'> <Edit className='edit-icon'/></button>
+                <button onClick={()=>handleShowDeleteDialog(student?._id)} className='student-manage-btn student-remove-btn'> <Delete className='remove-icon' /></button>
+            </div>}
+
+        </animated.div>
+  )
+}
+
+
 
 function Students() {
+    const [deleteStudent, setDeleteStudent] = useState(undefined);
     const [displayAdd, setDisplayAdd] = React.useState(false);
     const [displayEdit, setDisplayEdit] = React.useState(false);
     const [studentId, setStudentId] = React.useState('');
@@ -23,7 +48,7 @@ function Students() {
     const [programFilter, setProgramFilter] = React.useState('');
     const [studentsPage, setStudentsPage] = useState({
         startIndex:0,
-        endIndex:9,
+        endIndex:10,
         page:1
     })
 
@@ -35,6 +60,8 @@ function Students() {
     });
 
     const [isLoading, setIsLoading] = React.useState(false);
+    const [showMiniLoader, setShowMiniLoader] = useState(false);
+    const [showDialogBox, setShowDialogBox] = useState(false);
 
     //active user
 
@@ -52,6 +79,36 @@ function Students() {
     const studentsStatus = useSelector(state => state.students.status);
     const [filterStudents, setFilterStudents] = React.useState();
     const [students, setStudents] = React.useState();
+
+    //animations
+
+    const [animating, setAnimating] = useState(false)
+    let slideLeft = useSpring({
+        from:{x:-100},
+        to:{x:0},
+       
+        onRest:()=>{}
+    });
+
+    //animations
+  const fadeIn = useSpring({
+    from:{
+      opacity:0,
+    },
+
+    to:{
+      opacity:1
+    },
+
+    config:{
+      duration:2000
+    }
+  })
+
+    function handleShowDeleteDialog(id){
+        setShowDialogBox(prev => !prev);
+        setDeleteStudent(id);
+    }
 
     function handleDisplayAdd(){
         setDisplayAdd(prev => !prev);
@@ -95,16 +152,23 @@ function Students() {
 
     async function addStudent(student){
         try {
+            setShowMiniLoader(true);
             setIsLoading(true);
+            setDisplayAdd(false);
+
             const response = await axios.post(`${appUrl}student`, student);
             const {data} = response;
 
             message.success('Successfully added a student');
+
             
         } catch (error) {
             console.log(error);
         }finally{
             setIsLoading(false);
+            setTimeout(()=>{
+                setShowMiniLoader(false);
+            }, 3000);
         }
     }
 
@@ -155,7 +219,7 @@ function Students() {
     }
 
     function handlePagerBackward(){
-        if(studentsPage.endIndex>9){
+        if(studentsPage.endIndex>9 && studentsPage.page > 1){
             setStudentsPage(prev =>{
                 return{
                     ...prev,
@@ -181,19 +245,28 @@ function Students() {
 
     }
 
-    async function removeStudent(studentId){
+    async function removeStudent(){
+        let studentId = deleteStudent;
+        console.log(studentId);
         try {
             setIsLoading(true);
+            setShowMiniLoader(true);
+
             const response = await axios.delete(`${appUrl}student/${studentId}`);
             const {data} = response;
             const studentsNow = students?.filter((student)=> student._id !== studentId);
             setStudents(studentsNow);
             message.success('Deleted student account');
 
+            dispatch(getStudents());
+
         } catch (error) {
             console.log(error);
         }finally{
             setIsLoading(false);
+            setTimeout(()=>{
+                setShowMiniLoader(false);
+            }, 3000);
         }
 
     }
@@ -201,6 +274,8 @@ function Students() {
     async function updateStudent(studentId){
         try {
             setIsLoading(true);
+            setShowMiniLoader(true);
+            setDisplayEdit(false);
             const response = await axios.put(`${appUrl}student/${studentId}`, {username:student.username, regNO:student.regNO, email:student.email, isClassRep:student.isClassRep});
             const {data} = response;
             message.success('Successfully updated student account');
@@ -209,6 +284,9 @@ function Students() {
             console.log(error);
         }finally{
             setIsLoading(false);
+            setTimeout(()=>{
+                setShowMiniLoader(false);
+            }, 3000);
         }
     }
 
@@ -235,7 +313,12 @@ function Students() {
         }
 
 
-    }, [dispatch, studentsStatus, student, filterStudents, programsStatus, activeUser]);
+        return ()=>{
+            slideLeft = {};
+        }
+
+
+    }, [dispatch, studentsStatus, student, filterStudents, programsStatus, activeUser, animated]);
 
 
     if(studentsStatus === 'idle'){
@@ -244,7 +327,13 @@ function Students() {
 
   return (
     <div className=''>
-        {/* <SubNav/> */}
+        {
+            showMiniLoader? <MiniLoader/>:<></>
+        }
+
+        {
+            showDialogBox? <DialogBox message={"Are sure you want to permanently delete this student from CMS ?"} type={'danger'} handleConfirm={()=>{removeStudent()}} handleDeny={handleShowDeleteDialog} />:<></>
+        }
         {
             displayAdd?
             <div className="add-window-container">
@@ -328,13 +417,13 @@ function Students() {
 
             <div className="cms-students-background">
 
-                <div className="cms-students-text">
+                <animated.div style={fadeIn} className="cms-students-text">
                     <h1 className='cms-students-title'>STUDENTS</h1>
                     <p className='cms-students-description'>Find who you are looking for</p>
-                </div>
-               
+                </animated.div>
+
+                <animated.img style={fadeIn} src={studentsBackgroundImage} alt="" className='cms-module-backgroundImage' />
                 <div className="video-background-overlay"></div>
-                <video autoPlay={true} loop={true} className='cms-student-video' src={studentAnime}  ></video>
             </div>
 
             <div className="class-students-panel">
@@ -347,8 +436,8 @@ function Students() {
                     <div className="class-student-search">
 
                         <input placeholder='Search students ...' value={search} onChange={handleChangeSearch} type="text" className='student-search-field' />
-                        <button className='student-search-btn'>
-                            <Search onClick={handleSearch}  className='search-icon' />
+                        <button onClick={handleSearch}  className='student-search-btn'>
+                            <Search  className='search-icon' />
                         </button>
                     </div>
 
@@ -383,19 +472,7 @@ function Students() {
                         const {username, regNO} = student;
                         if(student?._id !== activeUser?._id){
                             return(
-                                <div  key={student._id} className='class-student'>
-                                    <div className="class-student-profile">
-                                        <AccountCircle className='student-profile-icon other-student-icon'/>
-                                        <p>{username}</p>
-                                        <p>{regNO}</p>
-                                    </div>
-
-                                    <div className="student-manage">
-                                        <button onClick={()=> handleDisplayEdit(student._id)} className='student-manage-btn student-edit-btn'> <Edit className='edit-icon'/></button>
-                                       { activeUser?.isClassRep && <button onClick={()=>removeStudent(student._id)} className='student-manage-btn student-remove-btn'> <Delete className='remove-icon' /></button>}
-                                    </div>
-
-                                </div>
+                               <StudentBox slideLeft={slideLeft} student={student} handleDisplayEdit={handleDisplayEdit} handleShowDeleteDialog={handleShowDeleteDialog} activeUser={activeUser} />
                             )
                     }
                     })}

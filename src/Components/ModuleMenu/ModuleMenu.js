@@ -20,7 +20,12 @@ function ModuleMenu({handleAdd, display,handleDisplay, handleRemove, handleDelet
     }, [])
     return (
     <div onMouseLeave={handleDisplay} onClick={handleDisplay} className='cms-module-menu'>
+
         <div className='cms-module-menu-options'>
+            <div onClick={handleDelete} className="cms-module-option-container">
+                <p className="cms-module-option">Delete</p>
+            </div>
+
            {!isFound?<div onClick={handleAdd} className="cms-module-option-container">
                 <p className="cms-module-option">Add</p>
                
@@ -36,12 +41,6 @@ function ModuleMenu({handleAdd, display,handleDisplay, handleRemove, handleDelet
                 <p className="cms-module-option">Edit</p>
             </div>
 
-            
-            <div onClick={handleDelete} className="cms-module-option-container">
-                <p className="cms-module-option">Delete</p>
-
-            </div>
-            
         </div>
 
 

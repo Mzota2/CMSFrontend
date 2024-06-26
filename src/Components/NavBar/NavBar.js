@@ -7,11 +7,19 @@ import Account from '../Account/Account';
 import {Close, Menu, GroupWork, LocalLibrary, Home, People, Abc, School, AddCircle, Notifications} from '@mui/icons-material';
 import {getAnnouncements} from '../../State/AnnouncementsSlice';
 import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
+import { appUrl } from '../../Helpers';
 
 
 function NavBar() {
     const navigate = useNavigate();
     const activeUser = useSelector(state => state.students.activeUser);
+
+    //semesterdates
+    const [schoolDates, setSchoolDates] = useState({
+        startDate:'',
+        endDate:''
+    });
 
     const [activeNav, setActiveNav] = useState('Home');
 
@@ -44,6 +52,27 @@ function NavBar() {
         setShowAccount(prev => !prev);
     }
 
+    async function getSchoolDates(){
+        try {
+
+            const response = await axios.get(`${appUrl}settings`);
+            let {data} = response;
+            
+
+            console.log(data);
+           
+            setSchoolDates((prev)=>{
+                return {
+                    ...prev,
+                    startDate:data[0]?.openingDate,
+                    endDate:data[0]?.closingDate
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(()=>{
         if(announcementsStatus === 'idle'){
             dispatch(getAnnouncements());
@@ -53,6 +82,8 @@ function NavBar() {
             setAnnouncements(foundAnnouncements);
 
         }
+
+        getSchoolDates();
 
        
 
@@ -92,11 +123,8 @@ function NavBar() {
                     <Abc className={`${activeNav === 'Modules' && 'active-nav-icon'} nav-option-icon`} />
                     <Link to={'/modules'} className={`${activeNav === 'Modules' && 'active-nav-option'} nav-option`}>Modules</Link>
                </div>
-                
-            </ul>
 
-            <ul className="nav-options-container">
-                <div onClick={handleActiveTab} className="nav-option-container">
+               <div onClick={handleActiveTab} className="nav-option-container">
                     <GroupWork  className={`${activeNav === 'Modules' && 'active-nav-icon'} group-icon nav-option-icon`} />
                     <Link to={'/groups'} className={`${activeNav === 'Groups' && 'active-nav-option'} nav-option`} >Groups</Link>
                 </div>
@@ -106,9 +134,20 @@ function NavBar() {
                     <Link to={'/students'} className={`${activeNav === 'Students' && 'active-nav-option'} nav-option`}>Students</Link>
                 </div>
                 
+            </ul>
+
+            <ul className="cms-nav-account-container">
+                
+                
                 {/* <Link className='nav-user' to={'/'}>{activeUserName}</Link> */}
                 <div  onClick={handleShowAccount} className="profile-container">
                     <AccountCircle className='profile-icon'/>
+                </div>
+
+                <div className="cms-semester-dates-container">
+                    <p>{schoolDates?.startDate}</p>
+                    <p>-</p>
+                    <p>{schoolDates?.endDate}</p>
                 </div>
             </ul>
 

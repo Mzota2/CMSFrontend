@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import "./Exams.css";
 import axios from 'axios';
-import { appUrl } from '../../Helpers';
-import {Close, Brightness1, ArrowDropDown, ArrowDropUp, Add} from '@mui/icons-material';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import { appUrl, diff_days, diff_hours } from '../../Helpers';
+import {Close, Brightness1, Add} from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getModules } from '../../State/ModulesSlice';
-import { setActiveModules } from '../../State/StudentsSlice';
 import SubNav from '../../Components/SubNav/SubNav';
+import MiniLoader from '../../Components/MiniLoader/MiniLoader';
+import { animated, useSpring } from '@react-spring/web';
+import { duration } from '@mui/material';
 
 function Exams() {
 
     const dispatch = useDispatch();
+    const [showMiniLoader, setShowMiniLoader] = useState(false);
       //modules
     const foundModules = useSelector(state => state.modules.data);
     const moduleStatus = useSelector(state => state.modules.status);
@@ -29,12 +30,12 @@ function Exams() {
     const [newExam, setNewExam] = useState({
         title:"",
         date:"",
-        time:{from:"", to:""},
+        time:{from:"00:00", to:"00:00"},
         description:""
     });
 
     //assignment-description
-    const [toggleDescription, setToggleDescription] = useState(false);
+    const [toggleDescription, setToggleDescription] = useState();
 
     //enlarge
     const [enlarge, setEnlarge] = useState(false);
@@ -42,11 +43,17 @@ function Exams() {
      //add assign
      const [showAdd, setShowAdd] = useState(false);
 
+     //animations
+     const slideLeft = useSpring({
+        from: { transform: 'translateX(-100%)' },
+        to: {transform:'translateX(0%)' },
+      });
+
     function handleShowAdd(){
         setShowAdd(prev => !prev);
     }
-    function handleToggleDescription(){
-        setToggleDescription(prev => !prev);
+    function handleToggleDescription(index){
+        setToggleDescription(index);
     }
 
     function handleChange(e){
@@ -76,63 +83,115 @@ function Exams() {
         e.preventDefault();
 
         if(newExam?.title){
-            const response = await axios.put(`${appUrl}module/${newExam?.title}`, {exams:{
-                date:newExam.date, time:newExam.time, description:newExam.description}
-            });
-            const {data} = response;
+
+            try {
+                setShowMiniLoader(true);
+                const activeModule = foundModules?.find((md)=> md?._id === newExam?.title)
+                let activeModuleExams = activeModule?.exams?.length? activeModule?.exams?.concat([newExam]): [newExam];
+    
+                const response = await axios.put(`${appUrl}module/${newExam?.title}`, {...activeModule, exams:activeModuleExams}
+                );
+                const {data} = response;
+                console.log(data);
+
+                dispatch(getModules());
+                setNewExam({
+                    title:"",
+                    date:"",
+                    time:{from:"00:00", to:"00:00"},
+                    description:""
+                });
+                
+            } catch (error) {
+                console.log(error);
+            }finally{
+
+                setTimeout(()=>{
+                    setShowMiniLoader(false);
+                }, 3000);
+            }
         }
     }
+
+    async function removeCompletedWork(exams){
+        try {
+            const updatedExamList = exams?.map( async(md)=>{
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                           
+                const newExams = md?.exams?.filter((exam, index)=>{
+                    const year = exam?.date?.slice(0, 4);
+                    const month = months[Number(exam?.date?.slice(5, 7)) -1 ];
+                    const day = exam?.date?.slice(8, 10);
+
+                    const dt2 = new Date(`${month} ${day}, ${year} ${exam?.time?.from+':00'}`);
+                    const dt1 = new Date();
+
+                    if(dt2?.getTime() < dt1?.getTime()){
+                        // Calculate the difference in milliseconds between dt2 and dt1
+                       var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+                       // Convert the difference to days by dividing it by the number of seconds in a day (86400)
+                       diff /= (60 * 60 * 24);
+                       // Return the absolute value of the rounded difference in days
+                       const timePassed =  Math.abs(Math.round(diff));
+       
+                       if(timePassed < 2){
+                            return  exam;
+                            // const response = await axios.put(`${appUrl}module/${md?._id}`, {exams:})
+                       }
+                   }
+                   else{
+                    return exam;
+                   }
+                   
+                });
+
+                const response = await axios.put(`${appUrl}module/${md?._id}`, {...md, exams:newExams});
+                const {data} = response;
+                console.log(data);
+            })
+            
+            
+            
+        } catch (error) {
+            console.log(error);
+        }
+}
 
     useEffect(()=>{
         if(moduleStatus === 'idle'){
             dispatch(getModules());
         }
 
+        //set modueles
 
-        else if((moduleStatus !== 'idle') && activeUser){
-         
-            const days = ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const date = new Date();
-            const day = date.getDay();
-           
-            const foundToday = foundModules?.filter((module)=>{
-                const isToday = module?.classDays?.find(cls => cls?.day === days[day]);
-                if(isToday){
-                    return isToday;
+        if(foundModules?.length){
+            let userModules = foundModules?.filter((md)=>{
+                if(activeUser?.modules?.find((id)=> id === md?._id)){
+                    return md;
                 }
             });
 
-            const foundExams = foundModules?.filter((module)=>{
-                return module?.exams?.length;
-            })
+            let userExamModules = userModules?.filter((md)=>{
+                return md?.exams?.length;
+            });
 
-            const foundAssignments = foundModules?.filter((module)=>{
-                return module?.assignments?.length;
-            })
+            removeCompletedWork(userExamModules);
 
-
-         
-            setAssignments(foundAssignments);
-            setExams(foundExams);
-        }
-
-        if(activeModules){
-            setModules(activeModules);
+            setModules(userModules);
+            setExams(userExamModules);
         }
 
 
-    }, [dispatch, moduleStatus, foundModules, activeModules])
+    }, [dispatch, moduleStatus, foundModules])
   return (
 
-    <div>
-        <SubNav/>
+    <div className='cms-assignments-body'>
 
-        <br />
-        <br />
-
-        <div className='cms-today-outer-container'>
-
-        <div className='cms-today-inner-container'>
+        {
+            showMiniLoader? <MiniLoader />:<></>
+        }
+    
+        
 
         <div className={`cms-today-main-container`}>
             
@@ -155,7 +214,7 @@ function Exams() {
                         
                         {modules?.map((md)=>{
                             return(
-                                <option value={md?._id}>
+                                <option key={md?._id} value={md?._id}>
                                     {md?.name}
                                 </option>
                             )
@@ -179,36 +238,76 @@ function Exams() {
                 
                 </form>:
 
-                exams?.map((md)=>{
+                <div className="cms-assignments-container">
+                    {
+                         exams?.map((md)=>{
+                            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    
+                            return md?.exams?.map((exam, index)=>{
 
-                    return md?.exams?.map((exam, index)=>{
-                        return(
-                            <div key={index} className="cms-today-cls  cms-assign-cls">
+                                    const year = exam?.date?.slice(0, 4);
+                                    const month = months[Number(exam?.date?.slice(5, 7)) -1 ];
+                                    const day = exam?.date?.slice(8, 10);
 
-                                <div className="cms--assignment-details-container">
-                                    <p>{md?.name}</p>
-                                    <p>{exam?.title}</p>
-                                    <p>{exam?.date}</p>
-                                    <p>{exam?.time?.from}- {exam?.time?.to}</p>
-                                    
-                                    <Brightness1 className='cms-class-on-icon cms-today-active-icon'/>
+                                    const dt2 = new Date(`${month} ${day}, ${year} ${exam?.time?.from+':00'}`);
+                                    const dt1 = new Date();
 
+                                return(
+                                    <animated.div onMouseOver={()=>{handleToggleDescription(index)}} style={slideLeft} key={index} className="cms-today-cls  cms-assign-cls">
+        
 
-                                </div>
+                                        <div className="cms-today-module-title-container">
+                                                <h4 className='cms-today-module-title'>{md?.code?.toUpperCase()}</h4>
+                                                <div className='cms-assignment-availability-container'>
+                                                    <p>Active</p>
+                                                    <div className="cms-today-module-availability"></div>
+                                            
+                                                </div>
+                                               
+                                        </div>
 
-                             
-                                
-                            </div>
-                        )
-                    })
+                                        
 
-                    
-                })
+                                        <div className="cms--assignment-details-container">
+                                                <p><strong>{exam?.task}</strong></p>
+    
+                                                <div className="cms-assignment-time-tracker-container">
+                                                    <div className="cms-assignment-time-tracker">
+                                                        <span className="cms-assignment-time-to-go">{diff_days(dt2, dt1)}</span>
+                                                        <p>Days to go</p>
+                                                    </div>
+    
+                                                    <div className="cms-assignment-time-tracker">
+                                                        <span className='cms-assignment-time-to-go'>{diff_hours(dt2, dt1)}</span>
+                                                        <p>Hours to go</p>
+                                                    </div>
+                                                </div>
+                            
+                                        </div>
+
+                                        {toggleDescription === index && <div className="cms-assignment-description-container">
+
+                                            <p className="cms-assignment-description-text">{exam?.description}</p>
+                                            <div className="cms-assignment-important-dates-container">
+                                                <p>{exam?.date}</p>
+                                                <p>{exam?.time?.from} - {exam?.time?.to}</p>   
+                                            </div>
+                                                
+                                        </div>
+        }
+                                     
+                                        
+                                    </animated.div>
+                                )
+                            })
+                            
+                        })
+                    }
+                </div>
+
+               
             }
 
-        </div>
-
-        </div>
         </div>
 
     </div>

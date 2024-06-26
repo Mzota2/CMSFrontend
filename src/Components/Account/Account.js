@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react'
 import './Account.css';
-import { AccountCircle , EditNote, Settings,GroupWork, Notifications, Group, Logout, Close, Edit, Engineering, Tag, Help, LightbulbCircle} from '@mui/icons-material';
+import { Settings, Logout, Close, Engineering, Help, LightbulbCircle, NotificationImportantOutlined} from '@mui/icons-material';
 import {message} from 'antd'
 import { Link, useNavigate } from 'react-router-dom';
+import {animated, useSpring} from '@react-spring/web';
+import InfoIcon from '@mui/icons-material/Info';
 
 
 function Account({student, handleClose, show, handleShowAccount}) {
@@ -10,6 +12,11 @@ function Account({student, handleClose, show, handleShowAccount}) {
   const menu = useRef(null);
 
   const [logingOut, setLogingOut] = useState(false);
+  //const animations
+  const slideIn = useSpring({
+    from:{right: show? '-100%':'0%'},
+    to:{right:show? '0%':'-100%'}
+  });
 
   function handleClickMenu(e){
     if(!menu?.current){
@@ -42,15 +49,15 @@ function Account({student, handleClose, show, handleShowAccount}) {
   }, [])
 
   return (
-    <div ref={menu}  style={{animationName:`${show? 'slideInA':'slideOutA'}`}}  className='cms-account-container'>
+    <animated.div ref={menu} style={slideIn}  className='cms-account-container'>
     
       <div className="cms-account-user-info-container">
-        <div  onClick={handleShowAccount} className="profile-menu-icon-container cms-account-profile-menu-icon">
+        <div onClick={handleShowAccount} className="profile-menu-icon-container cms-account-profile-menu-icon">
               {show && <Close className='cms-menu-icon'/>}
         </div>
 
-        <div className="cms-account-student-container">
-          <div onClick={()=>{navigate('/settings')}} className="cms-engineer-icon-container">
+        <div onClick={()=>{handleShowAccount(); navigate('/settings');}} className="cms-account-student-container">
+          <div className="cms-engineer-icon-container">
             <Engineering className='cms-account-engineer-icon'/>
           </div>
 
@@ -64,37 +71,22 @@ function Account({student, handleClose, show, handleShowAccount}) {
         <div className="cms-account-shortcut-container">
           <p>Your shortcuts</p>
         </div>
-        
-        <hr className='hrb' />
-
-        <div className="cms-account-student-important-container">
-
-          <div onClick={()=>{navigate('/assignments')}} className="cms-account-student-important">
-              <EditNote className='cms-account-icon'/>
-              <p className='cms-account-important-title'>Assignments</p>
-          </div>
-
-          <div onClick={()=>{navigate('/groups')}} className="cms-account-student-important">
-              <GroupWork className='cms-account-icon'/>
-              <p className='cms-account-important-title'>Groups</p>
-          </div>
-
-          <div onClick={()=>{navigate('/exams')}} className="cms-account-student-important">
-              <EditNote className='cms-account-icon'/>
-              <p className='cms-account-important-title'>Exams</p>
-          </div>
-
-          <div className="cms-account-student-important">
-              <Tag className='cms-account-icon'/>
-              <p className='cms-account-important-title'>Tags</p>
-          </div>
-
-        </div>
+    
 
         <hr className='hrb' />
 
 
-        <div className="cms-account-student-additional-container">
+        <div onClick={handleShowAccount} className="cms-account-student-additional-container">
+
+          <div onClick={()=>{navigate('/semester-info')}} className="cms-account-student-additional">
+              <InfoIcon className='cms-account-icon'/>
+              <p className='cms-account-important-title'>Semester Info</p>
+          </div>
+
+          <div onClick={()=>{navigate('/announcements')}} className="cms-account-student-additional">
+              <NotificationImportantOutlined className='cms-account-icon'/>
+              <p className='cms-account-important-title'>Messages</p>
+          </div>
 
           <div className="cms-account-student-additional">
               <LightbulbCircle className='cms-account-icon'/>
@@ -121,7 +113,7 @@ function Account({student, handleClose, show, handleShowAccount}) {
       </div>
 
   
-    </div>
+    </animated.div>
   )
 }
 
