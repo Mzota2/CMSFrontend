@@ -82,7 +82,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(to left,#107dacca,#2c275cdd );
+    background-image: linear-gradient(to left,#107dacaf,#2c275caf );
 }
 .signin-inner-container{
     display: flex;

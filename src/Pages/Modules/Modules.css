@@ -151,7 +151,6 @@
 }
 
 
-
 /* Module add css */
 .cms-module-days-container{
     display: flex;
@@ -213,14 +212,6 @@
         height: 100%;
         width: 100%;
     }
-
-    
-
-    .class-module-tab{
-        font-size: .85rem;
-        height: 35px;
-        width: 100px;
-    }
     .class-modules-window{
         padding-left: 1em;
         padding-right: 1em;
@@ -230,9 +221,22 @@
         font-size: 1rem;
         flex-wrap: wrap;
     }
-    /* .cms-select-btn{
-        padding: .2em .7em;
-    } */
+
+    .class-module-tab{
+        width: fit-content;
+        padding:0 1em;
+        height: 30px;
+        flex-shrink: 0;
+        font-size: .8rem;
+        
+    }
+
+    .cms-add-module-btn{
+        flex-shrink: 0;
+        height: 30px !important;
+        width: 40px !important;
+    }
+   
 }
 
 @media (max-width:450px) {

@@ -1,15 +1,32 @@
 .cms-settings-container{
     width: 100%;
-    height: 100vh;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     max-width: 100%;
-    padding: 1em;
+    background-color: var(--feint-blue);
+    position: relative;
+    min-height: 100vh;
     
 }
 
+.cms-settings-form{
+    background-color: white;
+    padding: 2em;
+}
+
+.cms-school-dates-exams-container{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.cms-school-dates-exam{
+    width: 50%;
+   
+}
 .cms-password-match{
     border: 2px solid green !important;
     box-shadow: none !important;

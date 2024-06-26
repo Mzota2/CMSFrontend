@@ -16,6 +16,7 @@ import Settings from "./Pages/Settings/Settings";
 import Announcement from "./Pages/Announcement/Announcement";
 import Exams from "./Pages/Exams/Exams";
 import Assignments from "./Pages/Assignments/Assignments";
+import SemesterInfo from "./Pages/SemesterInfo/SemesterInfo";
 
 function App() {
   const dispatch = useDispatch();
@@ -63,13 +64,16 @@ function App() {
           <Route path="/students" element={<Students/>} />
           <Route path="/modules" element={<Modules/>}/>
           <Route path="/classes" element={<Classes/>}/>
+          <Route path='/groups' element={<Groups/>} />
           
         </Route>
+        <Route path="/semester-info" element={<SemesterInfo/>}/>
         <Route path="/settings" element={<Settings/>} />
-        <Route path='/groups' element={<Groups/>} />
+       
         <Route path='/announcements' element={<Announcement/>} />
-        <Route path="/exams" element={<Exams/>}/>
-        <Route path="/assignments" element={<Assignments/>} />
+      
+        {/* <Route path="/exams" element={<Exams/>}/>
+        <Route path="/assignments" element={<Assignments/>} /> */}
        
       </Route>
       

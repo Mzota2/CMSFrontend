@@ -26,12 +26,16 @@
 .cms-students-title, .cms-students-description{
     color: white;
 }
-
+.cms-students-title{
+    font-weight: 500;
+    letter-spacing: 1px;
+    font-family: 'Open Sans', sans-serif;
+}
 .cms-students-description{
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 }
 .video-background-overlay{
-    background-color:rgba(0, 0, 0, 0.305);
+    background-color:rgba(0, 0, 0,  0.535);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -193,7 +197,7 @@
     background-color: white;
     padding: 1em 1em;
     justify-content: space-between;
-    border: 1px solid rgba(121, 237, 255, 0.339);
+    box-shadow: 0px 0px 2px 1px var(--feint-blue);
     width: 300px;
 }
 
@@ -248,7 +252,7 @@
 /* control add-window */
 
 .add-window-container{
-    z-index: 100;
+    z-index: 5;
     position: fixed;
     top: 0;
     right: 0;
@@ -347,6 +351,12 @@
 
 @media (max-width:600px){
 
+    .cms-students-title{
+        font-size: 1.3rem;
+    }
+    .cms-students-description{
+        font-size: 1rem;
+    }
     .cms-students-background{
         height: 70vh;
     }
@@ -410,5 +420,10 @@
     .cms-add-student-field{
         max-width: 100%;
     }
+
+    .cms-students-description{
+        max-width: 300px;
+    }
     
 }
+

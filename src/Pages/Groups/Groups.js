@@ -16,11 +16,17 @@ import { useRef } from 'react';
 import Loader from '../../Components/Loader/Loader';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box'
+import MiniLoader from '../../Components/MiniLoader/MiniLoader';
+import { message } from 'antd';
+import groupBackgroundImage from '../../Assets/class.jpg';
+import { animated, useSpring } from '@react-spring/web';
+import { duration } from '@mui/material';
 
 function Groups() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [pending, setPending]= useState(false);
+    const [showMiniLoader, setShowMiniLoader] = useState(false);
 
     const [assignPage, setAssignPage] = useState({
       assignIndex:0,
@@ -43,6 +49,9 @@ function Groups() {
     const [generateClicked, setGenerateClicked] = React.useState(false);
     const [groupNumber, setGroupNumber] = React.useState(3);
     const [taskTitle, setTaskTitle] = React.useState('');
+    const [dueDate, setDueDate] = useState('');
+    const [dueTime, setDueTime] = useState('');
+    const [groupDescription, setGroupDescription] = useState('');
     const [showReps, setShowReps] = React.useState(false);
 
     //group reps
@@ -70,6 +79,38 @@ function Groups() {
     const groupsStatus = useSelector(state => state.groups.status);
     const dispatch = useDispatch();
     const [apiGroups, setApiGroups] = React.useState([]);
+
+    //animations
+    const zoomOut = useSpring({
+      from:{
+        transform:'scale(0)',
+        opacity:0
+      },
+  
+      to:{
+        transform:'scale(1)',
+        opacity:1
+      },
+
+      config:{
+        duration:2000
+      }
+    })
+    
+      //animations
+    const fadeIn = useSpring({
+      from:{
+        opacity:0,
+      },
+
+      to:{
+        opacity:1
+      },
+
+      config:{
+        duration:2000
+      }
+    })
 
     function handleChangeGroupModule(e){
       const selectedModule = foundModules?.find((md)=> md?._id === e.target.value);
@@ -113,24 +154,57 @@ function Groups() {
       setTaskTitle(prev => e.target.value)
     }
 
+    function handleChangeTaskDescription(e){
+      setTaskTitle(prev => e.target.value)
+    }
+
+    function handleChangeDueDate(e){
+      setDueDate(prev => e.target.value)
+    }
+
+    function handleChangeDueTime(e){
+      setDueTime(prev => e.target.value)
+    }
+
     function toggleGenerate(){
       setGenerateClicked(prev => !prev)
     }
   
     async function confirmGroups(){
       try {
-        setResultGroups([]);
-        const group = {groups:resultGroups, task:taskTitle, moduleId:selectedModule, type:'group'};
-        console.log(selectedModule);
-        const activeModule = studentModules?.find((md)=> md?._id === selectedModule);
 
-        const updatedAssignments = [...activeModule?.assignments, group];
-        
-        const response = await axios.put(`${appUrl}module/${selectedModule}`, {assignments:updatedAssignments})
-        const {data} = response;
-        
+        if(taskTitle?.length && resultGroups?.length && dueDate?.length && dueTime?.length) {
+          setShowMiniLoader(true);
+
+          const group = {groups:resultGroups, task:taskTitle, moduleId:selectedModule, type:'group', dueDate, dueTime, description:groupDescription};
+          console.log(selectedModule);
+          const activeModule = studentModules?.find((md)=> md?._id === selectedModule);
+
+          console.log(activeModule);
+  
+          const updatedAssignments =activeModule?.assignments?.concat(group);
+          let activeModuleAssignments = activeModule?.assignments?.length? activeModule?.assignments?.concat([group]): [group];
+
+          console.log(updatedAssignments);
+
+          console.log(selectedModule);
+          
+          const response = await axios.put(`${appUrl}module/${selectedModule}`, {...activeModule, assignments:activeModuleAssignments
+          });
+          console.log(response);
+          const {data} = response;
+          console.log(data);
+
+          // setResultGroups([]);
+        }
+
+        else{
+          message.error("Please fill the empty fields");
+        }
       } catch (error) {
         console.log(error);
+      }finally{
+        setShowMiniLoader(false);
       }
     }
     function generateRandom(collection){
@@ -140,10 +214,10 @@ function Groups() {
 
     function handleShowReps(){
       setShowReps(prev => !prev);
-    }
-
-    
+    }    
     function addRep(collection, reps){
+
+      console?.log(reps);
      
       if(reps?.length === collection?.length){
         let count = 0;
@@ -167,8 +241,7 @@ function Groups() {
             if((!currentGroup.includes(rep)) && (!foundMatch)){
               currentGroup.push(rep);
             }
-  
-            console.log(randomIndex);
+
             isDone = collection?.flat()?.length >= moduleStudents?.length? true:false;
   
           }
@@ -178,8 +251,6 @@ function Groups() {
           count = count + 1;
         
         }
-
-
         return collection;
       }
 
@@ -222,10 +293,10 @@ function Groups() {
       
             while(group.length < students){
               let randomNumber = generateRandom(newCollection);
-              const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]))
+              const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]?._id))
       
-              if((!group.includes(newCollection[randomNumber])) && (!foundMatch)){
-                group.push(newCollection[randomNumber]);
+              if((!group.includes(newCollection[randomNumber]?._id)) && (!foundMatch)){
+                group.push(newCollection[randomNumber]?._id); //pushing id
               }
               
             }
@@ -236,37 +307,31 @@ function Groups() {
           }
          
           
-          if((moduleStudents?.length/students) >= 2){
+          if((moduleStudents?.length/students) >= 2){ //number of groups should be atleast equal or greater than 2
     
             if(additional.length >= students -1 ){
-              groups.push(additional);
+              groups.push([...additional?._id]);
             
             }
             else{
               var groupLength = groups.flat().length;
-        
-           
-              
+
               while(groupLength < collection.length){
-    
                 let groupIndex = generateRandom(groups);
                 let additionalIndex = generateRandom(additional);
-                const foundAdditional = groups?.find((group)=> group.includes(additional[additionalIndex]) );
+                const foundAdditional = groups?.find((group)=> group.includes(additional[additionalIndex]?._id) );
                 // console.log(foundAdditional);
                 if(groups[groupIndex].length < students + 1){
-                  if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
-                    groups[groupIndex].push(additional[additionalIndex]);
-                  
+                  if((!groups[groupIndex]?.includes(additional[additionalIndex]?._id)) && (!foundAdditional) ){
+                    groups[groupIndex].push(additional[additionalIndex]?._id);
                   }
                 }
       
                 groupLength = groups.flat().length;
-
               }
 
             }
           
-  
             // console.log(groups);
 
             const finalG = [...addRep(groups, groupReps)];
@@ -316,10 +381,10 @@ function Groups() {
       
             while(group.length < membersNum){
               let randomNumber = generateRandom(newCollection);
-              const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]))
+              const foundMatch = groups.find((group)=> group.includes(newCollection[randomNumber]?._id))
       
-              if((!group.includes(newCollection[randomNumber])) && (!foundMatch)){
-                group.push(newCollection[randomNumber]);
+              if((!group.includes(newCollection[randomNumber]?._id)) && (!foundMatch)){
+                group.push(newCollection[randomNumber]?._id); //pushing id first
               }
               
             }
@@ -336,12 +401,12 @@ function Groups() {
            while(groupLength < collection.length){
              let groupIndex = generateRandom(groups);
              let additionalIndex = generateRandom(additional);
-             const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]) );
+             const foundAdditional = groups.find((group)=> group.includes(additional[additionalIndex]?._id) );
             //  console.log(foundAdditional);
    
              if(groups[groupIndex].length < membersNum + 1){
-               if((!groups[groupIndex]?.includes(additional[additionalIndex])) && (!foundAdditional) ){
-                 groups[groupIndex].push(additional[additionalIndex]);
+               if((!groups[groupIndex]?.includes(additional[additionalIndex]?._id)) && (!foundAdditional) ){
+                 groups[groupIndex].push(additional[additionalIndex]?._id);
                
                }
            }
@@ -366,14 +431,15 @@ function Groups() {
     }
 
     function handleSelectRep(student){
-      const foundRep = groupReps?.find((rep)=> rep?._id === student?._id);
+      const foundRep = groupReps?.find((rep)=> rep === student?._id);
 
       // console.log('clicked');
      
       if(foundRep){
         const index = groupReps?.indexOf(foundRep);
-        groupReps?.splice(index, 1);
-        const currentReps = groupReps?.filter((rep, ind)=> ind === index);
+        // groupReps?.splice(index, 1);
+        const currentReps = groupReps?.filter((rep, ind)=> ind !== index);
+        console.log(currentReps);
         setGroupReps(prev =>{
           return [...currentReps];
         });
@@ -384,7 +450,7 @@ function Groups() {
         //
         // console.log('current members');
         setGroupReps(prev => {
-          return [...prev, student]
+          return [...prev, student?._id] //changed to student_id
         });
     }
   }
@@ -422,22 +488,6 @@ function Groups() {
 
   }
 
-  //select module
-  // function handleModuleGroups(id){
-
-  //   const selectedModule = apiGroups?.find((md)=> md?._id === id);
-  //   if(selectedModule){
-  //     const index = apiGroups?.indexOf(selectedModule);
-  //     setAssignPage(prev =>{
-  //       return {
-  //         ...prev,
-  //         index
-  //       }
-  //     });
-  //   }
-  
-  // }
-
     React.useEffect(()=>{
       if(groupsStatus === 'idle'){
         dispatch(getGroups());
@@ -461,11 +511,13 @@ function Groups() {
 
       else if(studentsStatus !== 'idle'){
         setIsLoading(false);
+
         const students = foundStudents?.map((student)=>{
           const foundStd =  student?.modules?.find((md)=> md === selectedModule);
           if(foundStd){
             return student;
           }
+
         }).filter((std)=> std);
 
         setModuleStudents(students);
@@ -523,47 +575,31 @@ function Groups() {
   }
   return (
     
-      <div>
+      <div className='cms-groups-outer-container'>
 
-          <Parallax ref={parallax} pages={activeStudent?.isClassRep? 3:2}>
+        {
+          showMiniLoader? <MiniLoader/>:<></>
+        }
 
-            <ParallaxLayer offset={0} speed={0}>
-              <div className="cms-group-landing-section">
-
-                <div className="sub-c-nav-container">
-                  <Link to={'/'} className="sub-logo-container">
-                        <h1 className='logo-title'>CMS</h1>
-                        <p>Electrical Department D2</p>
-                  </Link>
-                </div>
-
-                <div className="cms-group-landing-container">
-                    <div className="cms-group-landing-text">
-                        <h1>Create Random Groups</h1>
-                        <p>Remove all sources of bias and promote synergy</p>
-                        
-                        <div className="cms-group-navigate-groups-container">
-                          <button  onClick={() => parallax.current.scrollTo(1)} className='cms-btn cms-start-create-btn'>Get started</button>
-                          <button onClick={() => parallax.current.scrollTo(2)} className='cms-btn cms-view-groups'>View Groups</button>
-                        </div>
-                      
-                    </div>
-
-                    <div className="cms-group-landing-image-background">
-                        <img className='cms-group-image' src={groupsImage} alt="group" />
-                    </div>
-                </div>
-
+          
+          <div className="cms-students-background">
+        
+            <animated.div style={fadeIn} className="cms-students-text">
+                <h1 className='cms-students-title'>GROUPS</h1>
+                <p className='cms-students-description'>Find and create groups</p>
+            </animated.div>
                 
+            <animated.img style={fadeIn} src={groupBackgroundImage} alt="" className='cms-module-backgroundImage' />
+            <div className="video-background-overlay"></div>
+          </div>
+          
 
-              </div>
-            </ParallaxLayer>
-
-            <ParallaxLayer offset={0.87} speed={0.8}>
-              {activeStudent?.isClassRep? <div className="cms-group-container">
-              
-              <div className="cms-group-menu-options">
-              
+          
+          {activeStudent?.isClassRep? 
+          <div className="cms-group-container">
+          
+            <div className="cms-group-menu-options">
+            
 
               <select onChange={handleSelectedModule} value={selectedModule} name="modules" id="modules" className='cms-field cms-select-module-field'>
                 <option value="">Select module</option>
@@ -588,7 +624,8 @@ function Groups() {
               {
                     moduleStudents?.map((member)=>{
 
-                      const isChecked = groupReps.find(rep => rep === member);
+                      const isChecked = groupReps.find(rep => rep === member?._id); //changed to id
+                    
 
                       return (
                         <div className="cms-group-rep-option">
@@ -601,192 +638,195 @@ function Groups() {
                   }
               </div>:<></>}
               </div>
-            
-              </div>
+          
+            </div>
 
+            <div className="cms-groups-process-container">
+              <div className='group-selection-method-container'>
+                <p className='cms-select-method-text'>Select method to create</p>
 
-              <div className="cms-groups-process-container">
-                <div className='group-selection-method-container'>
-                  <p className='cms-select-method-text'>Select method to create</p>
+                <div className="cms-group-selection-main-container">
 
-                  <div className="cms-group-selection-main-container">
+                  <div className="group-input-container">
+                    <input value={groupNumber} onChange={handleChangeNumber} className='cms-input-field group-number-input' type="number" placeholder='Enter fixed group/student number'/>
+                    <input value={taskTitle} onChange={handleChangeTaskTitle} className='cms-input-field group-number-input' type="text" placeholder='Enter Task Title'/>
+                    
+                    <input value={groupDescription}  onChange={handleChangeTaskDescription}  type="text" placeholder='Enter description (optional)' className='group-number-input cms-input-field' />
 
-                    <div className="group-input-container">
-                      <input value={groupNumber} onChange={handleChangeNumber} className='cms-input-field group-number-input' type="number" placeholder='Enter fixed group/student number'/>
-                      <input value={taskTitle} onChange={handleChangeTaskTitle} className='cms-input-field group-number-input' type="text" placeholder='Enter Task Title'/>
-                    </div>
+                    <label htmlFor="due-date">Due Date</label>
+                    <input value={dueDate} onChange={handleChangeDueDate} className='cms-input-field group-number-input' type="date" placeholder='Enter Task Title'/>
+                    <label htmlFor="due-time">Due Time</label>
+                    <input value={dueTime} onChange={handleChangeDueTime} className='cms-input-field group-number-input' type="time" placeholder='Enter Task Title'/>
+                  
+                  </div>
 
-                    <div className="cms-random-method-container">
-                      <button onClick={()=>{toggleGenerate(); formGroupsByGroup(groupMembers, groupNumber)}} className='cms-btn selection-btn cms-fixed-group-selection-btn'>
-                        <ShuffleIcon className='cms-shuffle-icon'/>
-                        <p>By Group</p>
-                        
-                      </button>
-                      <button onClick={()=>{toggleGenerate(); formGroupsByStudents(groupMembers, groupNumber)}}  className='cms-btn selection-btn cms-fixed-student-selection-btn'>
-                        <ShuffleIcon className='cms-shuffle-icon'/>
-                        <p>By Student</p>
-                      </button>
-
-                    </div>
+                  <div className="cms-random-method-container">
+                    <button onClick={()=>{toggleGenerate(); formGroupsByGroup(groupMembers, groupNumber)}} className='cms-btn selection-btn cms-fixed-group-selection-btn'>
+                      <ShuffleIcon className='cms-shuffle-icon'/>
+                      <p>By Group</p>
+                      
+                    </button>
+                    <button onClick={()=>{toggleGenerate(); formGroupsByStudents(groupMembers, groupNumber)}}  className='cms-btn selection-btn cms-fixed-student-selection-btn'>
+                      <ShuffleIcon className='cms-shuffle-icon'/>
+                      <p>By Student</p>
+                    </button>
 
                   </div>
 
+                </div>
+
+              
                 
-                  
-                  <div className="group-button-container">
-                         {/* <button onClick={createArray} className='btn-generate cms-btn'>Generate</button>  */}
-                        <button onClick={confirmGroups} className='btn-confirm cms-btn'>Confirm</button>
-                    </div>
-
-                </div>
-
-
-                <div className="groups-container">
-                            {resultGroups?.length? resultGroups?.map((group, index)=>{
-                              return(
-                                <div key={index} className="group">
-                                  <h3>Group {index+1}</h3>
-                                  {group?.map((member, index)=>{
-                                    return(
-                                      <div key={index} className="cms-random-group-student">
-                                          <p  className='member-title'>{member?.username}</p>
-                                          <p  className='member-regNo'>{member?.regNO}</p>
-                                      </div>
-                                      
-                                    )
-                                  })}
-                                </div>
-                              )
-                            }):<></>}
-
-                            
-                            {pending&&<Box className='cms-load-groups'>
-                              <CircularProgress className='cms-group-loader' />
-                           </Box>}
-
-                          {!resultGroups.length ?<h2 className='cms-created-appear-text'>Created groups will appear here</h2>:<></>}
-
-
-                </div>
+                <div className="group-button-container">
+                      {/* <button onClick={createArray} className='btn-generate cms-btn'>Generate</button>  */}
+                      <button onClick={confirmGroups} className='btn-confirm cms-btn'>Confirm</button>
+                  </div>
 
               </div>
 
-              <br />
 
-            
-
-              </div>:<></>}
-            </ParallaxLayer>
-
-
-            <ParallaxLayer offset={activeStudent?.isClassRep? 1.5:0.9} speed={activeStudent?.isClassRep? 0.5:0.85}>
-              <div  className='cms-created-groups-container'>
-                    <h2 className='cms-created-groups-title'>RECENTLY CREATED GROUPS</h2>
-                    <br />
-
-                    <select onChange={handleChangeGroupModule} name="modules" id="modules" className='cms-field cms-add-student-field'>
-                    {
-                      modules?.map((md, index)=>{
-                        return(
-                          <option key={index}  value={md?._id} >
-                            {md?.code}
-                          </option>
-                        )
-                      })
-                    }
-
-                    </select>
-
-                    <div className="cms-selected-module-groups-title-container">
-                      {
-                        apiGroups[assignPage?.moduleIndex]?.assignments?.map((assign, index)=>{
-                          
-                          
-                            if(assign?.type === 'group' && assign?.task){
-                              return (
-                                <div key={index}  className="cms-selected-module-group-title">
-                                     <p className="cms-selected-module-group-title" onClick={()=>{handleSelectTask(index)}}>
-                                      {assign?.task?.substring(0, 16)+'...'}
-                                    </p>
-                                </div>
-                               
-                              )
-                            }
-                        
-                        })
-                      }
-                    </div>
-
-                    <div className="cms-recently-created-groups-container">
-                      <br />
-                        {apiGroups?.length? [apiGroups[assignPage?.moduleIndex]?.assignments[assignPage?.assignIndex]].map((groups, index)=>{
-                          
-                          if(groups?.type === 'group'){
-
+              <div className="groups-container">
+                          {resultGroups?.length? resultGroups?.map((group, index)=>{
                             return(
-                            <div className='cms-created-assignment' key={index} >
-                              <h3 className='cms-task-title'>{groups?.task}</h3>
+                              <div key={index} className="group">
+                                <h3>Group {index+1}</h3>
+                                {group?.map((memberId, index)=>{
+                                  const member = moduleStudents?.find(std => std?._id === memberId);
 
-                              <div className='cms-created-assignment-groups'>
-                              {groups?.groups.map((group, index)=>{
-                                
-                                if(index >= groupsPage.startIndex && index <groupsPage.endIndex){
+                                  return(
+                                    <div key={index} className="cms-random-group-student">
+                                        <p  className='member-title'>{member?.username}</p>
+                                        <p  className='member-regNo'>{member?.regNO}</p>
+                                    </div>
                                     
-                                    return(
-                                      <div key={index} className="group">
-                                        
-                                        <h3 style={{color:"black"}}>Group {index+1}</h3>
-                                        <br />
-                                        {
-                                          group?.map((member, index)=>{
-                                            return(
-                                              <div key={index} className="cms-random-group-student">
-                                                  <p  className='member-title'>{member?.username}</p>
-                                                   <p  className='member-regNo'>{member?.regNO}</p> 
-                                              </div>
-                                              
-                                            )
-                                          })
-                                        }
-                                      </div>
-                                    )
-                                }
-                                
-                              
-                              })}
+                                  )
+                                })}
                               </div>
+                            )
+                          }):<></>}
 
-                              <div className="cms-students-page-num">
-                                  {
-                                      groupsPage.page
-                                  }
-                              </div>
-
-                              <div className="cms-students-container-pager-tabs">
-                                <button onClick={handlePagerBackward} className='cms-btn'>
-                                    <ArrowBack />
-                                </button>
-                                <button onClick={handlePagerForward} className='cms-btn'>
-                                    <ArrowForward className='' />
-                                </button>
-                              </div>
-                                    
-                            </div>
-                          )
-                          }
                           
-                        }):<></>}
-                    </div>
+                          {pending&&<Box className='cms-load-groups'>
+                            <CircularProgress className='cms-group-loader' />
+                        </Box>}
 
-              
-              
-        
+                        {!resultGroups.length ?<h2 className='cms-created-appear-text'>Created groups will appear here</h2>:<></>}
+
+
               </div>
-            </ParallaxLayer> 
 
+            </div>
 
-          </Parallax>
-       
+            <br />
+
+        
+
+          </div>:<></>}
+        
+          <div  className='cms-created-groups-container'>
+                <h3 className='cms-created-groups-title'>RECENTLY CREATED GROUPS</h3>
+                <br />
+
+                <select onChange={handleChangeGroupModule} name="modules" id="modules" className='cms-field cms-add-student-field'>
+                {
+                  modules?.map((md, index)=>{
+                    return(
+                      <option key={index}  value={md?._id} >
+                        {md?.code}
+                      </option>
+                    )
+                  })
+                }
+
+                </select>
+
+                <div className="cms-selected-module-groups-title-container">
+                  {
+                    apiGroups[assignPage?.moduleIndex]?.assignments?.map((assign, index)=>{
+                      
+                      
+                        if(assign?.type === 'group' && assign?.task){
+                          return (
+                            <div key={index}  className="cms-selected-module-group-title">
+                                  <p className="cms-selected-module-group-title" onClick={()=>{handleSelectTask(index)}}>
+                                  {assign?.task?.substring(0, 16)+'...'}
+                                </p>
+                            </div>
+                            
+                          )
+                        }
+                    
+                    })
+                  }
+                </div>
+
+                <div className="cms-recently-created-groups-container">
+                  <br />
+                    {apiGroups?.length? [apiGroups[assignPage?.moduleIndex]?.assignments[assignPage?.assignIndex]].map((groups, index)=>{
+                      
+                      if(groups?.type === 'group'){
+
+                        return(
+                        <div className='cms-created-assignment' key={index} >
+                          <h3 className='cms-task-title'>{groups?.task}</h3>
+
+                          <div className='cms-created-assignment-groups'>
+                          {groups?.groups.map((group, index)=>{
+                            
+                      
+                            if(index >= groupsPage.startIndex && index <groupsPage.endIndex){
+                                
+                                return(
+                                  <animated.div style={zoomOut} key={index} className="group">
+                                    
+                                    <h3 style={{color:"black"}}>Group {index+1}</h3>
+                                    <br />
+                                    {
+                                      group?.map((memberId, index)=>{
+                                        const member = foundStudents?.find(std => std?._id === memberId);
+                                        return(
+                                          <div key={index} className="cms-random-group-student">
+                                              <p  className='member-title'>{member?.username}</p>
+                                                <p  className='member-regNo'>{member?.regNO}</p> 
+                                          </div>
+                                          
+                                        )
+                                      })
+                                    }
+                                  </animated.div>
+                                )
+                            }
+                            
+                          })}
+                          </div>
+
+                          <div className="cms-students-page-num">
+                              {
+                                  groupsPage.page
+                              }
+                          </div>
+
+                          <div className="cms-students-container-pager-tabs">
+                            <button onClick={handlePagerBackward} style={{backgroundColor:"white"}} className='cms-btn'>
+                                <ArrowBack />
+                            </button>
+                            <button onClick={handlePagerForward} style={{backgroundColor:"white"}} className='cms-btn'>
+                                <ArrowForward className='' />
+                            </button>
+                          </div>
+                                
+                        </div>
+                      )
+                      }
+                      
+                    }):<></>}
+                </div>
+
+          
+          
+    
+          </div>
+     
       </div>
 
 

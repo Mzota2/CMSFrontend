@@ -14,6 +14,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import moduleBackgroundImage from '../../Assets/modules.jpg';
 import ModuleMenu from '../../Components/ModuleMenu/ModuleMenu';
 import { message } from 'antd';
+import MiniLoader from '../../Components/MiniLoader/MiniLoader';
+import DialogBox from '../../Components/DialogBox/DialogBox';
+import { animated, useSpring } from '@react-spring/web';
 
 function Modules() {
   //active tab
@@ -23,16 +26,19 @@ function Modules() {
   //modulw options
   const [displayModuleOptions, setDisplayModuleOptions] = useState(false);
   const [selectedModule, setSelectedModule] = useState('');
+  const [deletedModule, setDeletedModule] = useState(undefined);
 
   //DOM
   const [viewEditModule, setViewEditModule] = React.useState(false);
   const [viewAddModule, setViewModule] = React.useState(false);
   const [user, setUser] = React.useState();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showMiniLoader, setShowMiniLoader] = useState(false);
+  const [showDialogBox, setShowDialogBox] = useState(false);
 
   const [classDays, setClassDays] = React.useState([{
-    from:'',
-    to:'',
+    from:'00:00',
+    to:'00:00',
     room:'',
     day:'Monday',
     isCancelled:false
@@ -71,12 +77,27 @@ function Modules() {
   const [program, setProgram] = React.useState();
 
   //modules status
-  const foundModules = useSelector(state => state.modules.data);
+  let foundModules = useSelector(state => state.modules.data);
   const modulesStatus = useSelector(state => state.modules.status);
   const [modules, setModules] = React.useState();
 
   //edit module
   const [moduleData, setModuleData] = React.useState();
+
+  //animations
+  const fadeIn = useSpring({
+    from:{
+      opacity:0,
+    },
+
+    to:{
+      opacity:1
+    },
+
+    config:{
+      duration:2000
+    }
+  })
 
 
   //DOM Functions
@@ -88,6 +109,9 @@ function Modules() {
   function handleDisplayEditModule(id){
     const currentModule = modules?.find((md => md?._id === id));
     setModuleData(currentModule);
+
+    setClassDays(prev =>[...currentModule?.classDays]);
+    setDaysNum(currentModule?.classDays?.length)
 
     handleViewEditModule();
 
@@ -156,12 +180,16 @@ function Modules() {
   //editing a module
   async function editModule(module, id){
     try {
-
+      setShowMiniLoader(true);
       const response = await axios.put(`${appUrl}module/${id}`, module);
       const {data} = response;
       
     } catch (error) {
       console.log(error);
+    }finally{
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
     }
   }
 
@@ -180,14 +208,16 @@ function Modules() {
   }
 
   //deleting a module
-  async function deleteModule(id){
+  async function deleteModule(){
+    let id = deletedModule;
+
     try {
+      setShowMiniLoader(true);
       const selectedModule = modules?.find((md)=> md?._id === id);
 
       const response = await axios.delete(`${appUrl}module/${id}`);
       const {data} = response;
       console.log(data);
-
 
       //remove in my modules
 
@@ -203,19 +233,31 @@ function Modules() {
         }
       });
 
+      dispatch(getModules());
+
       message.success(`Deleted ${selectedModule?.name}`);
 
       
     } catch (error) {
       console.log(error);
     }
+    finally{
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
+    }
   }
 
+  function handleShowDeleteDialog(id){
+    setShowDialogBox(prev => !prev);
+    setDeletedModule(id);
+    console.log(id);
+  }
   
   async function createModule(module){
     try {
+      setShowMiniLoader(true);
         //classDays
-
       setIsLoading(true);
       //class days
       const moduleDays = classDays.slice(0, daysNum);
@@ -232,13 +274,16 @@ function Modules() {
     }
     finally{
       setIsLoading(false);
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
     }
 
   }
 
   async function handleEnroll(id){
-
     try {
+      setShowMiniLoader(true);
       const studentModules =user?.modules?user?.modules.concat(id):[id];
       const selectedModule = modules?.find((md)=> md?._id === id);
 
@@ -251,12 +296,17 @@ function Modules() {
       message.success(`Enrolled in ${selectedModule?.name}`)
       
     } catch (error) {
-      
+      console.log(error);
+    }finally{
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
     }
   }
 
   async function handleLeave(id){
     try {
+      setShowMiniLoader(true);
       const studentModules = user?.modules?.filter((md)=> md !== id);
       const selectedModule = modules?.find((md)=> md?._id === id);
 
@@ -270,29 +320,40 @@ function Modules() {
     } catch (error) {
       console.log(error);
     }
+    finally{
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
+    }
 
   }
 
   async function handleAdd(id, module){
     try {
-
-      const selectedModule = modules?.find((md)=> md?._id === id);
+      setShowMiniLoader(true);
+      let selectedModule = modules?.find((md)=> md?._id === id);
       const modulePrograms = selectedModule?.programsId? selectedModule.programsId?.concat(user?.program):[user?.program];
 
-      const response = await axios.put(`${appUrl}module/${id}`, {...selectedModule, programsId:modulePrograms});
-      const {data} = response;
+      //sends request to backend
+      await axios.put(`${appUrl}module/${id}`, {...selectedModule, programsId:modulePrograms});
+     
       dispatch(getModules()); //get updated modules list
-
+    
       message.success(`Added ${module?.name} to ${program?.code}`)
-
       
     } catch (error) {
       console.log(error);
+    }finally{
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
+     
     }
   }
 
   async function handleRemove(id){
     try {
+      setShowMiniLoader(true);
       const selectedModule = modules?.find((md)=> md?._id === id);
       const modulePrograms = selectedModule?.programsId?.filter((pg)=> pg !== user?.program);
     
@@ -305,26 +366,34 @@ function Modules() {
 
       //remaining modules
 
-      dispatch(getModules()); //get updated modules list
-  
-      
+      dispatch(getModules()); //get updated modules list'
+      handleLeave(id);
+    
     } catch (error) {
       console.log(error);
+    }finally{
+      setTimeout(()=>{
+        setShowMiniLoader(false);
+      }, 3000)
     }
     
 
   }
+
   function handleSubmit(values,{resetForm}){
     createModule(values);
     resetForm();
 
   }
 
-
   function handleChangeTime(e, index, pos){
 
     const updateTime = classDays?.find((md, ind)=> ind === index);
-    updateTime[pos] = e.target.value;
+    const newTime = {...updateTime};
+    newTime[pos] = e.target.value;
+
+    classDays[index] = newTime;
+    
     const updatedClass = [...classDays];
     setClassDays(prev=>{
       return[
@@ -333,11 +402,11 @@ function Modules() {
       ]
     });
   }
-
-
   function handleChangeDay(e, index){
     const updateTime = classDays?.find((md, ind)=> ind === index);
-    updateTime.day = e.target.value;
+    const newDay = {...updateTime};
+    newDay.day = e.target.value;
+    classDays[index] = newDay;
     const updatedClass = [...classDays];
     setClassDays(prev=>{
       return[
@@ -351,7 +420,9 @@ function Modules() {
 
   function handleChangeRoom(e, index){
     const updateTime = classDays?.find((md, ind)=> ind === index);
-    updateTime.room = e.target.value;
+    const newRoom = {...updateTime};
+    newRoom.room = e.target.value;
+    classDays[index] = newRoom;
     const updatedClass = [...classDays];
     setClassDays(prev=>{
       return[
@@ -361,10 +432,18 @@ function Modules() {
     });
   }
 
-
   function handleIncrementDays(){
 
     if(daysNum < 3){
+      if(classDays?.length < 3){
+        setClassDays(prev => prev.concat({
+          from:'00:00',
+          to:'00:00',
+          room:'',
+          day:'Monday',
+          isCancelled:false
+        }));
+      }
       setDaysNum(prev => prev+1);
     }
     else{
@@ -382,6 +461,7 @@ function Modules() {
     }
   }
 
+
   React.useEffect(()=>{
 
     if(modulesStatus === 'idle'){
@@ -389,9 +469,9 @@ function Modules() {
     }
 
     else if(modulesStatus !== 'idle'){
+      // setModules(foundModules);
       if(activeTab === 'My Modules' && activeStudent){
            //get all my modules
-
          setModules(studentModules);
       }
 
@@ -400,8 +480,8 @@ function Modules() {
          setModules(foundModules);
       }
 
-      else if(activeTab === 'All Modules'){
-        const allModules = foundModules?.filter((md)=>{
+      else if(activeTab === 'Program'){
+        const allModules = modules?.filter((md)=>{
           return md?.programsId.find((pg)=> pg === user?.program); //find the modules in that program
         });
         setModules(allModules);
@@ -427,20 +507,20 @@ function Modules() {
     }
     
     setUser(activeUser);
-   
-   
-
-    // console.log(user?._id);
-    // handleMyModules();
 
   }, [dispatch, modulesStatus, activeUser, programsStatus, foundModules, studentsStatus, foundStudents]);
-    
 
-  // if(modulesStatus === 'idle'){
-  //   return <Loader/>
-  // }
   return (
-    <div className='container'>{
+    <div className='container'>
+
+     
+      {showDialogBox?<DialogBox type={'danger'} message={'Are you sure you want to permanently delete this module ?'} handleDeny={()=>{handleShowDeleteDialog(selectedModule)}} handleConfirm={()=>{deleteModule()}}/>
+       :<></>}
+
+      {
+        showMiniLoader?<MiniLoader/>:<></>
+      }
+        {
             viewAddModule?
             <div className="add-window-container">
                 
@@ -573,7 +653,7 @@ function Modules() {
                         
                         </div>
 
-                        <button  type='submit' className='cms-btn add-student-btn'> {isLoading? <CircularProgress className='cms-loader'/>: 'Add'}</button>
+                        <button  type='submit' className='cms-btn add-student-btn'>Add</button>
                     </form>
 
                     )}
@@ -702,9 +782,9 @@ function Modules() {
 
 
 
-                          <div className="cms-add-days-container">
+                          {daysNum < 3 && <div className="cms-add-days-container">
                             <Add onClick={handleIncrementDays} className='cms-add-days' />
-                          </div>
+                          </div>}
 
                           <div className="cms-add-days-container">
                             <Remove onClick={handleDecrementDays} className='cms-add-days' />
@@ -712,7 +792,7 @@ function Modules() {
 
                         </div>
 
-                        <button  type='submit' className='cms-btn add-student-btn'> {isLoading? <CircularProgress className='cms-loader'/>: 'Add'}</button>
+                        <button  type='submit' className='cms-btn add-student-btn'>Edit</button>
                     </form>
 
                     )}
@@ -724,14 +804,14 @@ function Modules() {
         }
         
         <div className="cms-students-background">
-
-          <div className="cms-students-text">
+          
+          <animated.div style={fadeIn} className="cms-students-text">
               <h1 className='cms-students-title'>MODULES</h1>
               <p className='cms-students-description'>Find your modules</p>
-          </div>
+          </animated.div>
 
-          <div className="video-background-overlay"></div>
-          <img src={moduleBackgroundImage} alt="" className='cms-module-backgroundImage' />
+          <animated.img style={fadeIn} src={moduleBackgroundImage} alt="" className='cms-module-backgroundImage' />
+          <div style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}} className="video-background-overlay"></div>
         </div>
      
       <div className="class-modules-container">
@@ -749,16 +829,14 @@ function Modules() {
           </div>
 
           <div className="class-modules-window">
-
             {
               isViewDepartment?
               modules?.map((module)=>{
                 const isFound = module?.programsId?.find(id => id === user?.program);
   
-    
                 // const {name, code, lecturer} = module;
                 return(
-                  <div  className='cms-class-module' key={module?._id}>
+                  <div style={{borderBottom:`${isFound? '2px dashed var(--light-blue)':''}`}} className='cms-class-module' key={module?._id}>
                         <p className='cms-today-name'>{module?.name}</p>
                         <p className='cms-today-code'>{module?.code}</p>
                         <p className='cms-today-lecturer'>{module?.lecturer}</p>
@@ -768,22 +846,9 @@ function Modules() {
                         <MoreVertIcon  className='cms-module-options-icon'/>
                       </div>
 
-
-                      {displayModuleOptions && selectedModule===module?._id?<ModuleMenu display={displayModuleOptions} handleDisplay={handleDisplayModuleOptions} isFound={isFound} handleEdit={()=>{handleDisplayEditModule(module?._id)}} handleRemove={()=>{handleRemove(module?._id)}} handleAdd={()=>{handleAdd(module?._id, module)}} handleDelete={()=>{deleteModule(module?._id)}} />:<></>}
-
-                      {/* <div className="cms-class-module-controllers">
-                        {
-                          isFound? <button onClick={()=>{handleRemove(module?._id)}} className='cms-select-btn cms-leave-btn cms-remove-btn'> <RemoveCircleOutline className='cms-remove-icon' /></button>:
-                          <button onClick={()=>{handleAdd(module?._id)}} className='cms-select-btn cms-enroll-btn'> <AddCircleOutline/></button>
-                        }
-
-                        <button onClick={()=>{handleDisplayEditModule(module?._id)}} className='cms-select-btn cms-enroll-btn cms-edit-btn'> <Edit /></button>
-                        <button onClick={()=>{deleteModule(module._id)}} className='cms-select-btn cms-leave-btn cms-delete-btn'> <Delete/></button>
-                      
-                      
-                      </div> */}
-    
-    
+                      {displayModuleOptions && selectedModule===module?._id?<ModuleMenu display={displayModuleOptions} handleDisplay={handleDisplayModuleOptions} isFound={isFound} handleEdit={()=>{handleDisplayEditModule(module?._id)}} handleRemove={()=>{handleRemove(module?._id)}} handleAdd={()=>{handleAdd(module?._id, module)}} handleDelete={(id)=>{
+                        id = module?._id
+                        handleShowDeleteDialog(id)}} id={module?._id} />:<></>}
                   </div>
                 )
               }):modules?.map((module)=>{
@@ -809,13 +874,10 @@ function Modules() {
               })
             }
 
-        </div>
+          </div>
 
       </div>
-    
-
-        
-
+  
     </div>
   )
 }

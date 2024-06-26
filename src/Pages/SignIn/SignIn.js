@@ -13,17 +13,49 @@ import {message} from 'antd';
 
 import {LocalLibrary,Abc, School, GroupWork} from '@mui/icons-material';
 
+import {useSpring, animated} from '@react-spring/web'
+
 
 import Box from '@mui/material/Box';
 
 function SignIn() {
 
   const [isLoading, setIsLoading] = React.useState(false);
-
-  const [userData, setUserData]  = React.useState();
   const [showPassword, setShowPassword] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  //animations
+  const slideUp = useSpring({
+    from: { transform: 'translateY(100%)' },
+    to: {transform:'translateY(0%)' },
+  });
+
+  const zoomOut = useSpring({
+    from:{
+      transform:'scale(0)',
+      opacity:0
+    },
+
+    to:{
+      transform:'scale(1)',
+      opacity:1
+    }
+  })
+
+  const fadeIn = useSpring({
+    from:{
+      opacity:0,
+    },
+
+    to:{
+      opacity:1
+    },
+
+    config:{
+      duration:2000
+    }
+  })
 
   function handleShowPassword(){
     setShowPassword(prev => !prev);
@@ -62,12 +94,12 @@ function SignIn() {
 
       <div className="cms-signin-panel">
       <div className='sign-image-container'>
-            <img className='sign-image' src={image1} alt="class" />
+            <animated.img style={fadeIn} className='sign-image' src={image1} alt="class" />
 
             <div className="image-overlay"></div>
       </div>
 
-      <div className="signin-inner-container">
+      <animated.div style={zoomOut} className="signin-inner-container">
         
         <div className="signin-hello">
           <h3 className='signin-hello-text'>Welcome to Electrical Department CMS</h3>
@@ -120,35 +152,35 @@ function SignIn() {
         )}
 
         </Formik>
-      </div>
+      </animated.div>
        
 
         <div className="cms-panel-options">
 
-          <div className="signin--option">
+          <animated.div style={slideUp} className="signin--option">
             <LocalLibrary className='cms-service-icon'/>
             <h4 className='cms-service-title'>Classes</h4>
             <p className='cms-service-description'>Find active and postponed classes</p>
-          </div>
+          </animated.div>
 
-          <div className="signin--option">
+          <animated.div style={slideUp} className="signin--option">
             <Abc className='cms-service-icon'/>
             <h4 className='cms-service-title'>Modules</h4>
             <p className='cms-service-description'>Find your modules and more</p>
 
-          </div>
+          </animated.div>
 
-          <div className="signin--option">
+          <animated.div style={slideUp} className="signin--option">
             <School className='cms-service-icon'/>
             <h4 className='cms-service-title'>Exams & Assignments</h4>
             <p className='cms-service-description'>Find your assignments and exams</p>
-          </div>
+          </animated.div>
 
-          <div className="signin--option">
+          <animated.div style={slideUp} className="signin--option">
             <GroupWork className='cms-service-icon'/>
             <h4 className='cms-service-title'>Groups</h4>
             <p className='cms-service-description'>Find your groups and group members</p>
-          </div>
+          </animated.div>
 
         </div>
       </div>

@@ -1,23 +1,3 @@
-@keyframes slideInA {
-    from{
-        right: -100%;
-    }
-
-    to{
-        right: 0;
-    }
-    
-}
-
-@keyframes slideOutA {
-    from{
-        right: 0;
-    }
-
-    to{
-        right: -100%;
-    }
-}
 
 .cms-account-container{
     position: absolute;
@@ -30,12 +10,8 @@
     z-index: 2;
     padding: 2em;
     gap: 1em;
-    animation-duration: 1s;
-    animation-timing-function: ease-in-out;
-    animation-fill-mode: forwards;
     height: 100vh;
     overflow-y: auto;
-
 }
 
 /* USER INFO */
