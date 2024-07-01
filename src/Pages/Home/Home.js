@@ -77,10 +77,10 @@ function Home() {
     const activeUser = useSelector(state => state.students.activeUser);
 
     //animations
-    const [slideUp] = useSpring({
+    const slideUp = useSpring({
       from:{transform:'translateX(-100%)'},
       to:{transform:'translateX(0%)'}
-    },{deps:[noticeIndex]});
+    });
 
     const [ref, fadeInSlideUp] = useInView(
       () => ({
@@ -136,7 +136,6 @@ function Home() {
       try {
         const response = await axios.get(`${appUrl}announcement`);
         const {data} = response;
-        console.log(data);
 
         setNotices(data);
         
@@ -195,13 +194,18 @@ function Home() {
             // setAssignments(foundAssignments);
             // setExams(foundExams);
 
+              const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+              const date = new Date();
+
               //my modules active classes
-              const activeClasses = myModules?.filter((md)=> md?.isCancelled === false);
+              const activeClasses = myModules?.filter((md)=> md?.classDays?.find(cls => cls?.isCancelled === false && cls?.day === days[date.getDay()]));
+              console.log(date.getDay());
               setClassesNum(activeClasses?.length);
 
               //my assignments
               const activeAssignments = myModules?.map((md)=>{
-                return md?.assignments?.map((assign)=>assign)
+                console.log(md?.assignments);
+                return md?.assignments;
               })?.flat();
 
               setAssignmentsNum(activeAssignments?.length);
@@ -345,7 +349,7 @@ function Home() {
                 // console.log(md);
 
                 return(
-                  <animated.div ref={ref} style={fadeInSlideUp} className="cms-home-today" onClick={()=>{handleSelectModule(md?._id)}}>
+                  <animated.div key={md?._id} ref={ref} style={fadeInSlideUp} className="cms-home-today" onClick={()=>{handleSelectModule(md?._id)}}>
 
                     <div className="cms-home-today-details">
                       <p className='cms-today-name'>{md?.name}</p>
@@ -363,8 +367,7 @@ function Home() {
                     <div className="cms-home-today-more-info">
                     {
                  
-                
-                      
+            
                         activeModule?.classDays?.map((dy, idx)=>{
                           return(
                           <div key={idx} className="cms-module-dy cms-module-dy-home">

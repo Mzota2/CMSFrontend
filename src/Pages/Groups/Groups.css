@@ -503,11 +503,7 @@
 }
 
 @media (max-width:500px) {
-   
-    .cms-group-menu-options{
-        flex-shrink: 0;
-        overflow-x: auto;
-    }
+
     .cms-groups-process-container{
         padding: 2em 1em;
     }
@@ -525,6 +521,8 @@
     .cms-select-rep-btn{
         flex-shrink: 0;
     }
+
+   
  
 }
 

@@ -45,13 +45,11 @@
     .logo-title-sub-nav{
         font-size: 1rem;
     }
-    .logo-desc-sub-nav, .cms-sub-nav-page-title{
-       font-size:.8rem;
-    }
+    
     .cms-sub-nav-main-container{
         gap: 1em;
     }
     .cms-sub-nav-body{
-        padding: 1em;
+        padding: 1em 0;
     }
 }

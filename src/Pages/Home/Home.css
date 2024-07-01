@@ -351,6 +351,7 @@
     .cms-home-message-quote{
         font-size: 1rem;
     }
+
 }
 
 @media (max-width:650px){
@@ -373,6 +374,17 @@
         gap: 3em;
         justify-content: center;
     }
+
+    .cms-home-todays-classes{
+        flex-direction: column;
+        flex-wrap: nowrap;
+        width: 100%;
+    }
+
+    .cms-home-today-details{
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 @media(max-width:550px){
 
@@ -385,7 +397,7 @@
 
 @media (max-width:450px) {
     .cms-home-message{
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
     .cms-home-section{
         padding: 1em 1em;
