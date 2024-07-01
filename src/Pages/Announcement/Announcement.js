@@ -259,7 +259,7 @@ function Announcement() {
 
         <div className="cms-anno-messages-container">
         {
-            announcements?.length? announcements?.map((anno)=>{
+            announcements?.length? [...announcements]?.sort((a, b)=> new Date(b.createdAt) - new Date(a.createdAt))?.map((anno)=>{
                 let isViewed = anno?.viewList?.find((id)=> id === activeUser?._id);
         
                 return(

@@ -120,14 +120,14 @@
     /* background-color: rgba(0, 0, 0, 0.731); */
     background-color: var(--dark-blue);
     filter: blur(2);
-    height: 50vh;
+    min-height: 50vh;
     max-height: fit-content;
     width:100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding-bottom: 2em;
-    min-height: fit-content;
+    height: fit-content;
 }
 
 .cms-home-important-notice-container{
@@ -160,6 +160,25 @@
 .cms-notice-summary-text{
     color: white;
     font-size: 1rem;
+}
+
+.cms-home-important-notice-slider{
+    margin-top: 1em;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    flex-shrink: 0;
+}
+
+.cms-notice-slider-btn{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: #dddd;
+    border: none;
+    cursor: pointer;
 }
 .cms-class-analytics-container{
     display: flex;

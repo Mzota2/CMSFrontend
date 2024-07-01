@@ -18,6 +18,36 @@ import {useNavigate} from 'react-router-dom'
 import { appUrl } from '../../Helpers';
 import axios from 'axios';
 
+function Message({noticeIndex, notices}){
+
+   //animations
+   const slideRight = useSpring({
+    from:{transform:'translateX(100%)'},
+    to:{transform:'translateX(0%)'}
+  });
+
+  useEffect(()=>{
+
+  }, [noticeIndex])
+
+  return(
+    <div>
+      {
+        notices?.map((notice, index)=>{
+          if(index === noticeIndex){
+            return(
+              <animated.p key={notice?._id} style={noticeIndex === index? slideRight:{}} className='cms-home-important-notice-text'>{notices[noticeIndex]?.description}</animated.p>
+            )
+          }
+          
+        })
+      }
+     
+    </div>
+    
+  )
+}
+
 function Home() {
 
     const navigate = useNavigate();
@@ -118,11 +148,7 @@ function Home() {
       to:{transform:'scale(1)'}
     });
 
-    //animations
-    const slideRight = useSpring({
-      from:{transform:'translateX(100%)'},
-      to:{transform:'translateX(0%)'}
-    });
+   
   
 
     function handleSelectModule(id){
@@ -137,7 +163,7 @@ function Home() {
         const response = await axios.get(`${appUrl}announcement`);
         const {data} = response;
 
-        setNotices(data);
+        setNotices(data?.sort((a, b)=> new Date(b.createdAt) - new Date(a.createdAt)));
         
       } catch (error) {
         console.log(error);
@@ -294,10 +320,34 @@ function Home() {
             <div className="cms-home-important-notice-container">
 
               <div className="cms-notice-container">
+
                 <h3 className='cms-home-important-notice-title'>Important notice</h3>
 
-                {notices?.length ?<animated.p style={slideRight} className='cms-home-important-notice-text'>{notices[noticeIndex]?.description}</animated.p>:
-                <p>--None--</p>}
+                {notices?.length && <Message notices={notices} noticeIndex={noticeIndex} />}            
+
+                <div className="cms-home-important-notice-slider">
+                  {
+                    notices?.length ? notices?.map((notice, index)=>{
+                      if(index <= 2){
+                        return (
+                          <button style={{backgroundColor:`${noticeIndex === index? "var(--light-blue)":""}`}} onClick={()=>{setNoticeIndex(index)}} key={notice._id} className='cms-notice-slider-btn'>
+  
+                          </button>
+                        )
+                      }
+                      else if(index === 3){
+                        return(
+                          <a href='/announcements' style={{backgroundColor:`${noticeIndex === index? "var(--light-blue)":""}`}}>View all</a>
+                        )
+                      }
+
+                      else{
+                        return null;
+                      }
+                      
+                    }):<></>
+                  }
+                </div>
               </div>
 
              
