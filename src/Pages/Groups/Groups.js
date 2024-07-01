@@ -628,7 +628,7 @@ function Groups() {
                     
 
                       return (
-                        <div className="cms-group-rep-option">
+                        <div key={member?._id} className="cms-group-rep-option">
                             <p value={member?._id}>{member?.username}</p>
                             <button className={`cms-btn ${isChecked? 'cms-group-rep-btn':'cms-group-member-btn'}`}  onClick={()=>{handleSelectRep(member)}} >{`${isChecked? 'Rep': 'Select'}`}</button>
                         </div>

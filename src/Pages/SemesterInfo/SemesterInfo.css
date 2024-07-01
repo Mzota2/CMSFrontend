@@ -92,7 +92,13 @@
         align-items: center;
         overflow-x: auto;
     }
-    
+
+    .cms-semester-info-container{
+        padding: 1em 0;
+    }
+    .cms-semester-info-panel-mobile-sidebar-icon{
+        margin-left: 1em;
+    }
    
 }
 
