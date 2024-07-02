@@ -198,7 +198,6 @@ function Home() {
         }
 
         else if((moduleStatus !== 'idle') && activeUser){
-            setIsLoading(false);
             
              //set my modules
              const myModules = activeUser?.modules?.map((myModule)=>{
@@ -265,17 +264,11 @@ function Home() {
                 dispatch(setActiveModules(myModules))
                 
             }
-
             findNotices();
+            setIsLoading(false);
 
     }, [index, dispatch,moduleStatus, foundModules, foundPrograms, programsStatus, todate]);
 
-
-    useEffect(()=>{
-
-      // animateNotice();
-
-    }, [noticeIndex])
     if(isLoading){
         return <Loader show={!isLoading}/>
     }
@@ -323,7 +316,7 @@ function Home() {
 
                 <h3 className='cms-home-important-notice-title'>Important notice</h3>
 
-                {notices?.length && <Message notices={notices} noticeIndex={noticeIndex} />}            
+                {notices?.length ? <Message notices={notices} noticeIndex={noticeIndex} />:<>~~None~~</>}            
 
                 <div className="cms-home-important-notice-slider">
                   {
