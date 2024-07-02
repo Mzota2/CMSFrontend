@@ -155,7 +155,7 @@ function Groups() {
     }
 
     function handleChangeTaskDescription(e){
-      setTaskTitle(prev => e.target.value)
+      setGroupDescription(prev => e.target.value)
     }
 
     function handleChangeDueDate(e){

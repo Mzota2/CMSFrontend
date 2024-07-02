@@ -264,7 +264,6 @@ function Home() {
                 dispatch(setActiveModules(myModules))
                 
             }
-
             findNotices();
             setIsLoading(false);
 
